@@ -108,12 +108,52 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (filled by roadmap) | | |
+| PAY-01 | Phase 1 | Pending |
+| PAY-02 | Phase 3 | Pending |
+| PAY-03 | Phase 1 | Pending |
+| PAY-04 | Phase 1 | Pending |
+| PAY-05 | Phase 1 | Pending |
+| PAY-06 | Phase 1 | Pending |
+| PAY-07 | Phase 3 | Pending |
+| PAY-08 | Phase 2 | Pending |
+| INTENT-01 | Phase 2 | Pending |
+| INTENT-02 | Phase 2 | Pending |
+| INTENT-03 | Phase 2 | Pending |
+| DISC-01 | Phase 2 | Pending |
+| DISC-02 | Phase 2 | Pending |
+| DISC-03 | Phase 2 | Pending |
+| RCPT-01 | Phase 2 | Pending |
+| RCPT-02 | Phase 2 | Pending |
+| RCPT-03 | Phase 2 | Pending |
+| RCPT-04 | Phase 2 | Pending |
+| FULF-01 | Phase 3 | Pending |
+| FULF-02 | Phase 3 | Pending |
+| DRIFT-01 | Phase 3 | Pending |
+| DRIFT-02 | Phase 3 | Pending |
+| DRIFT-03 | Phase 3 | Pending |
+| DRIFT-04 | Phase 3 | Pending |
+| LEDG-01 | Phase 1 | Pending |
+| LEDG-02 | Phase 3 | Pending |
+| UI-01 | Phase 2 | Pending |
+| UI-02 | Phase 3 | Pending |
+| UI-03 | Phase 3 | Pending |
+| UI-04 | Phase 4 | Pending |
+| SEC-01 | Phase 4 | Pending |
+| SEC-02 | Phase 3 | Pending |
+| SEC-03 | Phase 4 | Pending |
+| PROOF-01 | Phase 3 | Pending |
+| PROOF-02 | Phase 4 | Pending |
+| PROOF-03 | Phase 4 | Pending |
+| PROOF-04 | Phase 4 | Pending |
+| DEPLOY-01 | Phase 1 | Pending |
+| DEPLOY-02 | Phase 4 | Pending |
+| DEPLOY-03 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 38 total
-- Mapped to phases: (pending roadmap)
+- v1 requirements: 40 total
+- Mapped to phases: 40
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-31*
-*Last updated: 2026-10-31 after initial definition*
+*Last updated: 2026-11-01 after roadmap creation*
