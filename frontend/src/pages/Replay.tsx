@@ -7,6 +7,8 @@ import { Button } from '../components/ui/Button'
 import { ReplayStep } from '../components/domain/ReplayStep'
 import { Skeleton } from '../components/ui/Skeleton'
 import { EmptyState } from '../components/ui/EmptyState'
+import { Badge } from '../components/ui/Badge'
+import { formatMinor } from '../lib/money'
 import { ShieldCheck, Download, ArrowLeft, CheckCircle2 } from 'lucide-react'
 
 export const ReplayPage: React.FC = () => {
@@ -109,6 +111,19 @@ export const ReplayPage: React.FC = () => {
         >
           <CheckCircle2 className="w-4 h-4" />
           <span>{verifyMessage}</span>
+        </div>
+      )}
+
+      {replay.counterfactual && (
+        <div role="status" className="p-3 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] text-[14px] flex items-center gap-2 flex-wrap">
+          {replay.counterfactual.loss_avoided_cents > 0 ? (
+            <span className="font-semibold text-[var(--color-ok)]">
+              Naive agent would have captured {formatMinor(replay.counterfactual.naive_capture_cents)}. PromiseLoop blocked it.
+            </span>
+          ) : (
+            <span className="text-[var(--color-muted)]">Gated and naive flows agree: nothing to protect on this purchase.</span>
+          )}
+          {replay.counterfactual.simulated && <Badge tone="warn">simulated</Badge>}
         </div>
       )}
 

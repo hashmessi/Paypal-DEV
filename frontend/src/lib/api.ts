@@ -6,6 +6,7 @@ import type {
   LedgerEventItem,
   ProofMetric,
   ProofScenario,
+  ProofProtected,
   IntentConstraints,
   ProductCandidate,
   MerchantQuote,
@@ -88,6 +89,7 @@ interface BackendReplay {
   chain_intact: boolean
   chain_event_count: number
   broken_step?: number | null
+  counterfactual?: ReplayData['counterfactual']
 }
 
 function mapReplay(r: BackendReplay): ReplayData {
@@ -99,6 +101,7 @@ function mapReplay(r: BackendReplay): ReplayData {
     broken_at_step: r.broken_step ?? undefined,
     artifacts_verified: `${r.steps.filter((s) => s.timestamp).length}/${r.steps.length}`,
     custom_id_matches: r.chain_intact,
+    counterfactual: r.counterfactual ?? undefined,
     steps: r.steps.map((s) => ({
       n: s.step_number,
       title: s.name,
@@ -231,8 +234,8 @@ export const api = {
     return getLedgerFeed()
   },
 
-  async getProof(): Promise<{ metrics: ProofMetric[]; scenarios: ProofScenario[] }> {
-    const remote = await apiFetch<{ metrics: ProofMetric[]; scenarios: ProofScenario[] }>('/proof')
+  async getProof(): Promise<{ metrics: ProofMetric[]; scenarios: ProofScenario[]; protected?: ProofProtected }> {
+    const remote = await apiFetch<{ metrics: ProofMetric[]; scenarios: ProofScenario[]; protected?: ProofProtected }>('/proof')
     if (remote) return remote
 
     const metrics: ProofMetric[] = [

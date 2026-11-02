@@ -4,6 +4,8 @@ import { PageHeader } from '../components/ui/PageHeader'
 import { Card } from '../components/ui/Card'
 import { DataTable } from '../components/ui/DataTable'
 import { Badge } from '../components/ui/Badge'
+import { StatCard } from '../components/ui/StatCard'
+import { formatMinor } from '../lib/money'
 import { Skeleton } from '../components/ui/Skeleton'
 import type { ProofScenario } from '../types/api'
 import { Check } from 'lucide-react'
@@ -73,6 +75,20 @@ export const ProofPage: React.FC = () => {
         ),
     },
     {
+      header: 'Naive agent would capture',
+      accessor: (row: ProofScenario) =>
+        row.counterfactual ? (
+          <div className="text-[12px] tabular-nums">
+            <p>{formatMinor(row.counterfactual.naive_capture_cents)}</p>
+            {row.counterfactual.loss_avoided_cents > 0 && (
+              <p className="text-[var(--color-bad)] font-semibold">blocked</p>
+            )}
+          </div>
+        ) : (
+          <span className="text-[12px] text-[var(--color-muted)]">—</span>
+        ),
+    },
+    {
       header: 'Result',
       accessor: (row: ProofScenario) => (
         <Badge tone={row.passed ? 'ok' : 'bad'}>
@@ -90,6 +106,20 @@ export const ProofPage: React.FC = () => {
         title="Proof & technical metrics"
         description="Empirical benchmark suite measuring invariant drift precision, capture safety, and rule execution speed across labeled test scenarios."
       />
+
+      {data?.protected && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <StatCard
+            label="$ protected"
+            value={formatMinor(data.protected.loss_avoided_cents)}
+            caption={`Naive agent would have captured this; PromiseLoop blocked it in ${data.protected.scenarios_blocked} scenarios`}
+            tone="ok"
+          />
+          {data.protected.simulated && (
+            <div className="flex items-center"><Badge tone="warn">simulated (fake gateway)</Badge></div>
+          )}
+        </div>
+      )}
 
       {/* 6 Metric Cards with Numerator / Denominator Large */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
