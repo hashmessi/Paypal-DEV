@@ -10,6 +10,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { FindingBanner } from '../components/domain/FindingBanner'
 import { SyntheticBadge } from '../components/domain/TrustBadge'
 import { TruthPanel } from '../components/domain/TruthPanel'
+import { PromiseProgressionHUD } from '../components/domain/PromiseProgressionHUD'
 import { PromiseHeaderPill } from '../components/domain/StatusPill'
 import { Skeleton } from '../components/ui/Skeleton'
 import { EmptyState } from '../components/ui/EmptyState'
@@ -130,6 +131,9 @@ export const DriftReviewPage: React.FC = () => {
           />
         }
       />
+
+      {/* 6-Stage Promise Progression HUD */}
+      <PromiseProgressionHUD promise={promise} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column (8 cols): Evidence comparison & Findings */}

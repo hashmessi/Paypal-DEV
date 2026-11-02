@@ -17,6 +17,7 @@ import {
 import { TrustBadge, SyntheticBadge } from '../components/domain/TrustBadge'
 import { Timeline } from '../components/domain/Timeline'
 import { TruthPanel } from '../components/domain/TruthPanel'
+import { PromiseProgressionHUD } from '../components/domain/PromiseProgressionHUD'
 import { ScenarioConsole } from '../components/domain/ScenarioConsole'
 import { FindingBanner } from '../components/domain/FindingBanner'
 import { formatMinor } from '../lib/money'
@@ -264,6 +265,9 @@ export const ReceiptPage: React.FC = () => {
           </div>
         }
       />
+
+      {/* 6-Stage Promise Progression HUD */}
+      <PromiseProgressionHUD promise={promise} />
 
       {/* Stale Terms Banner */}
       {promise.status === 'stale' && (
