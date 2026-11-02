@@ -16,6 +16,7 @@ class FakeGateway:
         self.captures: dict[str, dict[str, Any]] = {}
         self.voids: dict[str, dict[str, Any]] = {}
         self.idempotency_records: dict[str, dict[str, Any]] = {}
+        self.tracking_records: list[dict[str, Any]] = []
         self.fail_next_capture: bool = False
         self.fail_next_void: bool = False
         self.webhook_verify_result: bool = True
@@ -193,4 +194,23 @@ class FakeGateway:
         webhook_id: str,
     ) -> bool:
         return self.webhook_verify_result
+
+    async def push_tracking(
+        self,
+        order_id: str,
+        capture_id: str,
+        carrier: str,
+        tracking_number: str,
+        sku: str,
+    ) -> dict[str, Any]:
+        record = {
+            "order_id": order_id,
+            "capture_id": capture_id,
+            "carrier": carrier,
+            "tracking_number": tracking_number,
+            "sku": sku,
+            "status": "TRACKING_RECORDED",
+        }
+        self.tracking_records.append(record)
+        return record
 

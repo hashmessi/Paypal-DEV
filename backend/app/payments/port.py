@@ -89,3 +89,14 @@ class PaymentGateway(Protocol):
         """Verify authenticity of PayPal webhook notification."""
         ...
 
+    async def push_tracking(
+        self,
+        order_id: str,
+        capture_id: str,
+        carrier: str,
+        tracking_number: str,
+        sku: str,
+    ) -> dict[str, Any]:
+        """Push verified shipment tracking and item SKU to PayPal Orders v2 tracking API."""
+        ...
+

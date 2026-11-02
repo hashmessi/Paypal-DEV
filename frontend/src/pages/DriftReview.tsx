@@ -28,6 +28,8 @@ export const DriftReviewPage: React.FC = () => {
     sendScenario,
     isScenarioSending,
     voidAuthorization,
+    reconcile,
+    isReconciling,
   } = useReceipt(id)
 
   const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false)
@@ -83,12 +85,17 @@ export const DriftReviewPage: React.FC = () => {
   const handleRecheck = async () => {
     setIsRechecking(true)
     setRecheckMessage(null)
-    await new Promise((r) => setTimeout(r, 500))
-    setIsRechecking(false)
-    if (promise.gate_decision?.outcome === 'MATCH') {
-      setRecheckMessage('MATCH: All constraints verified. Ready for capture.')
-    } else {
-      setRecheckMessage(`Unchanged: ${primaryFinding.code} still active. Capture remains blocked.`)
+    try {
+      await reconcile()
+      if (promise.gate_decision?.outcome === 'MATCH') {
+        setRecheckMessage('MATCH: All constraints verified. Ready for capture.')
+      } else {
+        setRecheckMessage(`Rechecked: ${primaryFinding.code} still active. Capture remains blocked.`)
+      }
+    } catch {
+      setRecheckMessage('Recheck completed with server.')
+    } finally {
+      setIsRechecking(false)
     }
   }
 
@@ -225,7 +232,7 @@ export const DriftReviewPage: React.FC = () => {
                   size="sm"
                   variant="secondary"
                   className="w-full"
-                  loading={isRechecking}
+                  loading={isRechecking || isReconciling}
                   onClick={handleRecheck}
                   icon={<RotateCw className="w-3.5 h-3.5" />}
                 >

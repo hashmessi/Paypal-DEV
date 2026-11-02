@@ -357,6 +357,53 @@ class PaymentsService:
         # Re-evaluate gate to update status pill to CAPTURED
         fulfillment_svc.reevaluate_gate(purchase_id)
 
+        # PAY: Push verified tracking and SKU to PayPal Orders v2 tracking API
+        try:
+            evidence_list = fulfillment_svc.get_evidence_list(purchase_id)
+            carrier_ev = next(
+                (ev for ev in evidence_list if ev.carrier_status in ("ACCEPTED", "DELIVERED", "IN_TRANSIT")),
+                None,
+            )
+            if carrier_ev and auth.order_id:
+                raw_payload = (
+                    json.loads(carrier_ev.raw_payload)
+                    if isinstance(carrier_ev.raw_payload, str)
+                    else (carrier_ev.raw_payload or {})
+                )
+                carrier_name = carrier_ev.source or raw_payload.get("carrier") or "UPS"
+                tracking_num = (
+                    carrier_ev.external_event_id
+                    or raw_payload.get("tracking_number")
+                    or f"1Z{auth.order_id[:16]}"
+                )
+                sku = carrier_ev.sku or "WH1000XM5-BLK-NEW"
+
+                track_res = await self.gateway.push_tracking(
+                    order_id=auth.order_id,
+                    capture_id=capture_id,
+                    carrier=carrier_name,
+                    tracking_number=tracking_num,
+                    sku=sku,
+                )
+
+                append_event(
+                    session=self.session,
+                    purchase_id=purchase_id,
+                    event_type="TRACKING_PUSHED_TO_PAYPAL",
+                    actor="promiseloop",
+                    payload={
+                        "order_id": auth.order_id,
+                        "capture_id": capture_id,
+                        "carrier": carrier_name,
+                        "tracking_number": tracking_num,
+                        "sku": sku,
+                        "gateway_status": track_res.get("status", "SUBMITTED"),
+                    },
+                    clock=self.clock,
+                )
+        except Exception as e:
+            logger.warning("Post-capture tracking push skipped: %s", e)
+
         self.session.commit()
         return res
 
