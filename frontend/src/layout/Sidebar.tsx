@@ -23,29 +23,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
   const { pathname, search } = useLocation()
   const onDriftView = pathname === '/tower' && new URLSearchParams(search).get('filter') === 'drift'
 
-  const workspaceLinks = [
-    { to: '/tower', label: 'Control tower', icon: LayoutGrid },
-    { to: '/receipts', label: 'Promise receipts', icon: FileText },
+  const coreFlowLinks = [
+    { to: '/', label: 'Start / Overview', icon: Compass },
+    { to: '/shop', label: 'Shopper Agent', icon: ShoppingBag },
+    { to: '/receipts', label: 'Promise Receipts', icon: FileText },
+    { to: '/tower', label: 'Control Tower', icon: LayoutGrid },
     {
       to: '/tower?filter=drift',
-      label: 'Drift queue',
+      label: 'Drift Queue',
       icon: AlertOctagon,
       badge: driftCount > 0 ? driftCount : undefined,
     },
-    { to: '/events', label: 'Event history', icon: Activity },
+    { to: '/proof', label: 'Proof & Metrics', icon: ShieldCheck },
   ]
 
-  const demoLinks = [
-    { to: '/', label: 'Judge start', icon: Compass },
-    { to: '/shop', label: 'Shopper agent', icon: ShoppingBag },
-    { to: '/proof', label: 'Proof', icon: ShieldCheck },
-    { to: '/verify', label: 'Verify receipt', icon: ShieldCheck },
-    { to: '/spine', label: 'Spine console', icon: Terminal },
+  const auditLinks = [
+    { to: '/events', label: 'Event History', icon: Activity },
+    { to: '/verify', label: 'Receipt Verifier', icon: ShieldCheck },
+    { to: '/spine', label: 'Spine Console', icon: Terminal },
   ]
 
-  const renderNavGroup = (title: string, links: typeof workspaceLinks) => (
+  const renderNavGroup = (title: string, links: typeof coreFlowLinks) => (
     <div className="space-y-1 py-2">
-      <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--color-muted)] hidden md:block">
+      <p className={`px-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--color-muted)] ${isMobileOpen ? 'block' : 'hidden md:block'}`}>
         {title}
       </p>
       {links.map((link) => {
@@ -73,11 +73,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-105" aria-hidden="true" />
-              <span className="truncate hidden md:inline">{link.label}</span>
+              <span className={`truncate ${isMobileOpen ? 'inline' : 'hidden md:inline'}`}>{link.label}</span>
             </div>
             {link.badge !== undefined && (
               <span
-                className="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)] shrink-0 hidden md:inline-flex"
+                className={`px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)] shrink-0 ${isMobileOpen ? 'inline-flex' : 'hidden md:inline-flex'}`}
                 aria-label={`${link.badge} open drift cases`}
               >
                 {link.badge}
@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
   )
 
   const mobileDrawerClass = isMobileOpen
-    ? 'fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-2xl block animate-in slide-in-from-left duration-200'
+    ? 'fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-2xl flex flex-col animate-in slide-in-from-left duration-200'
     : 'hidden md:flex'
 
   return (
@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
               <div className="w-7 h-7 rounded-[8px] bg-gradient-to-br from-[#003087] to-[#0070ba] text-white flex items-center justify-center font-black text-[15px] shadow-xs shrink-0 select-none">
                 P
               </div>
-              <div className="min-w-0 hidden md:block">
+              <div className={`min-w-0 ${isMobileOpen ? 'block' : 'hidden md:block'}`}>
                 <span className="text-[17px] font-bold text-[var(--color-ink)] tracking-tight block leading-tight">
                   PromiseLoop
                 </span>
@@ -138,14 +138,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
 
           {/* Nav groups */}
           <nav className="p-2 md:p-3 space-y-1">
-            {renderNavGroup('Workspace', workspaceLinks)}
+            {renderNavGroup('Core Flow', coreFlowLinks)}
             <div className="h-[1px] bg-[var(--color-line)] my-1" />
-            {renderNavGroup('Demo & Testing', demoLinks)}
+            {renderNavGroup('Audit & Diagnostics', auditLinks)}
           </nav>
         </div>
 
         {/* Footer merchant card */}
-        <div className="p-3 border-t border-[var(--color-line)] hidden md:block">
+        <div className={`p-3 border-t border-[var(--color-line)] ${isMobileOpen ? 'block' : 'hidden md:block'}`}>
           <div className="p-2.5 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] hover:border-[var(--color-line-strong)] transition-colors flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-800 to-slate-900 text-white text-[12px] font-bold flex items-center justify-center shrink-0 shadow-2xs">
               DM

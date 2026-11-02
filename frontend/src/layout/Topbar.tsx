@@ -14,18 +14,18 @@ export const Topbar: React.FC<TopbarProps> = ({ onToggleMobile }) => {
   const isClockSimulated = offsetMs > 0
 
   const getPageTitle = (pathname: string): string => {
-    if (pathname === '/') return 'Judge start'
-    if (pathname.startsWith('/shop')) return 'Shopper agent'
-    if (pathname.startsWith('/receipts/') && pathname.endsWith('/replay')) return 'Promise replay'
-    if (pathname.startsWith('/receipts/')) return 'Promise receipt'
-    if (pathname === '/receipts') return 'Promise receipts'
-    if (pathname.startsWith('/tower/cases/')) return 'Drift review'
-    if (pathname.startsWith('/tower')) return 'Control tower'
-    if (pathname === '/proof') return 'Proof'
-    if (pathname === '/verify') return 'Verify receipt'
-    if (pathname === '/events') return 'Event history'
-    if (pathname === '/spine') return 'Spine console'
-    return 'Control tower'
+    if (pathname === '/') return 'Start / Overview'
+    if (pathname.startsWith('/shop')) return 'Shopper Agent'
+    if (pathname.startsWith('/receipts/') && pathname.endsWith('/replay')) return 'Promise Replay'
+    if (pathname.startsWith('/receipts/')) return 'Promise Receipt'
+    if (pathname === '/receipts') return 'Promise Receipts'
+    if (pathname.startsWith('/tower/cases/')) return 'Drift Review'
+    if (pathname.startsWith('/tower')) return 'Control Tower'
+    if (pathname === '/proof') return 'Proof & Metrics'
+    if (pathname === '/verify') return 'Receipt Verifier'
+    if (pathname === '/events') return 'Event History'
+    if (pathname === '/spine') return 'Spine Console'
+    return 'Control Tower'
   }
 
   const currentTitle = getPageTitle(location.pathname)
