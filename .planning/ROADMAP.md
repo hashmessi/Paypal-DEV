@@ -10,10 +10,11 @@ PromiseLoop is built as four vertical slices that follow the money dependency ch
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Money Spine on a Public URL** - Real Sandbox authorize, capture and void with idempotency, webhooks and the ledger, deployed on Render (hard gate Nov 2)
-- [ ] **Phase 2: Promise Receipt** - Instruction to constraints to Channel3 offer to hashed, buyer-approved receipt bound to a real authorization (Acts 1-4, ~Nov 3-4)
-- [ ] **Phase 3: Drift-Gated Settlement + Promise Replay** - Fulfillment evidence drives a pure drift engine that blocks or permits capture; Replay shows the full lifecycle (Acts 5-8, ~Nov 5-8)
-- [ ] **Phase 4: Control Tower, Proof & Judge Readiness** - AG Grid tower, metrics, security pass, durable deploy, README, video and Devpost submission (~Nov 9-12)
+- [x] **Phase 1: Money Spine on a Public URL** - Real Sandbox authorize, capture and void with idempotency, webhooks and the ledger, deployed on Render (hard gate Nov 2)
+- [x] **Phase 2: Promise Receipt** - Instruction to constraints to Channel3 offer to hashed, buyer-approved receipt bound to a real authorization (Acts 1-4, ~Nov 3-4)
+- [x] **Phase 3: Drift-Gated Settlement + Promise Replay** - Fulfillment evidence drives a pure drift engine that blocks or permits capture; Replay shows the full lifecycle (Acts 5-8, ~Nov 5-8)
+- [x] **Phase 4: Control Tower, Proof & Judge Readiness** - AG Grid tower, metrics, security pass, durable deploy, README, video and Devpost submission (~Nov 9-12)
+- [ ] **Phase 5: Product Optimization to 50/50 & Winning Readiness** - Execute slices S0-S11 to bridge baseline 30/50 to Top #1 50/50, securing Tie-Breaker dominance (Technological Implementation & Design) across all judging modalities (~Nov 2-12)
 
 ## Phase Details
 
@@ -82,7 +83,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Money Spine on a Public URL | 0/TBD | Not started | - |
-| 2. Promise Receipt | 0/TBD | Not started | - |
-| 3. Drift-Gated Settlement + Promise Replay | 0/TBD | Not started | - |
-| 4. Control Tower, Proof & Judge Readiness | 0/TBD | Not started | - |
+| 1. Money Spine on a Public URL | 5/5 | Completed | 2026-11-02 |
+| 2. Promise Receipt | 4/4 | Completed | 2026-11-02 |
+| 3. Drift-Gated Settlement + Promise Replay | 6/6 | Completed | 2026-11-02 |
+| 4. Control Tower, Proof & Judge Readiness | 6/6 | Completed | 2026-11-02 |
+| 5. Product Optimization to 50/50 & Winning Readiness | 0/8 | In Progress | - |

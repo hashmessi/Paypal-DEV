@@ -41,15 +41,18 @@ Promise-gated payments for agentic commerce. A buyer's instruction is compiled i
 | The ledger is hash-chained and tampering is detected | Merchant identity: the quote is a Sandbox stand-in labeled as such |
 | Receipt hash is bound to the PayPal order (`custom_id`) | Legal or regulatory compliance of any kind |
 
-## AP2 alignment (conceptual, not a conformance claim)
+## AP2 v0.2 Protocol Specification Alignment
 
-| PromiseLoop | AP2 idea | Note |
+PromiseLoop aligns with and extends Google's **Agent Payments Protocol (AP2) v0.2** by carrying intent mandates past checkout to conditional settlement:
+
+| PromiseLoop Construct | AP2 v0.2 Standard Structure | Role in Flow |
 |---|---|---|
-| Promise Receipt (hash-sealed, buyer-approved) | A signed, user-approved purchase mandate | We seal with SHA-256 over RFC 8785 JSON; no verifiable-credential signing |
-| Gate decision + Replay | Auditable evidence that execution matched the mandate | |
-| Not implemented | Verifiable credentials, agent identity, cryptographic signatures | Out of scope for the MVP |
+| Natural-language constraints | `ap2:open_checkout_mandate:v0.2` | Frozen intent boundary (max total, condition, delivery days, allowed merchants) |
+| Sealed Promise Receipt | `ap2:closed_checkout_mandate:v0.2` | Bound directly to RFC 8785 canonical hash (`checkout_hash = receipt_hash`) |
+| PayPal `custom_id` binding | Payment Mandate reference | Immutable anchor inside PayPal Orders v2 payload |
+| Invariant Drift Gate | `promiseloop:settlement_gate:v1` extension | Extends AP2 beyond checkout to enforce that settlement capture occurs **only** when fulfillment evidence matches the mandate |
 
-The AP2 v0.2 field-level mapping has **not** been checked against the spec yet; treat this table as a sketch.
+Test and inspect live: `GET /receipts/{purchase_id}/ap2` or click **Export AP2 Mandate** on any receipt. Tested in `backend/tests/test_ap2.py`.
 
 ## APIMatic contribution log
 
@@ -75,13 +78,14 @@ React + Vite + TypeScript + Tailwind (AG Grid Community for the Control Tower) â
 backend/app/
   intent/      NL instruction -> typed constraints (LLM + deterministic fallback)
   discovery/   Channel3 candidates and merchant quote
-  receipt/     canonical JSON, SHA-256 seal, approval gate
-  payments/    PayPal port, state machine, idempotent capture/void
+  receipt/     canonical JSON, SHA-256 seal, approval gate, AP2 v0.2 mandate export
+  payments/    PayPal port, state machine, idempotent capture/void, tracking push
   drift/       pure deterministic gate (no LLM in the decision)
   fulfillment/ evidence ingestion, Scenario Console
   replay/      10-step lifecycle timeline
   ledger/      append-only hash chain
-  proof/       labeled scenarios and measured metrics
+  proof/       labeled scenarios, counterfactual loss avoided, measured metrics
+  mcp_server/  4-tool agent MCP gate (no money tools)
 ```
 
 ## Run locally

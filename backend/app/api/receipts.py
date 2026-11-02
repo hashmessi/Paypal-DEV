@@ -18,6 +18,7 @@ from app.receipt.models import (
     StaleReceiptHashError,
 )
 from app.receipt.service import ReceiptService
+from app.receipt.ap2 import compile_ap2_mandate
 
 router = APIRouter(prefix="/receipts", tags=["receipts"])
 
@@ -150,6 +151,25 @@ async def get_receipt(
         approved_at=receipt.approved_at.isoformat() if receipt.approved_at else None,
         created_at=receipt.created_at.isoformat(),
     )
+
+
+@router.get("/{purchase_id}/ap2")
+async def get_receipt_ap2_mandate(
+    purchase_id: str,
+    db: Session = Depends(get_db),
+    clock: Clock = Depends(get_clock),
+) -> Dict[str, Any]:
+    """Export standardized Google Agent Payments Protocol (AP2) v0.2 Mandates for purchase."""
+    purchase = db.get(Purchase, purchase_id)
+    if not purchase:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Purchase {purchase_id} not found")
+
+    service = ReceiptService(db=db, clock=clock)
+    receipt = service.get_latest_receipt(purchase_id)
+    if not receipt:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No receipt found for purchase {purchase_id}")
+
+    return compile_ap2_mandate(receipt=receipt, purchase=purchase)
 
 
 @router.post("/{purchase_id}/modify-terms", response_model=ReceiptResponse)

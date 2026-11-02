@@ -20,6 +20,7 @@ import { ScenarioConsole } from '../components/domain/ScenarioConsole'
 import { FindingBanner } from '../components/domain/FindingBanner'
 import { formatMinor } from '../lib/money'
 import { formatTimeOnly, formatDateTime } from '../lib/time'
+import { api } from '../lib/api'
 import type { FulfillmentEvent, PaymentState } from '../types/api'
 import {
   ShieldCheck,
@@ -33,6 +34,9 @@ import {
   Store,
   Truck,
   FileCheck,
+  Download,
+  ExternalLink,
+  FileCode,
 } from 'lucide-react'
 
 const NOTE_TONE = {
@@ -102,11 +106,63 @@ export const ReceiptPage: React.FC = () => {
   }
 
   const handleVerifyIntegrity = async () => {
+    if (!promise) return
     setIsVerifying(true)
     setIntegrityStatus(null)
-    await new Promise((r) => setTimeout(r, 600))
-    setIsVerifying(false)
-    setIntegrityStatus(`✓ Chain intact · ${27 + promise.evidence_events.length * 3} events`)
+    try {
+      const res = await api.verifyIntegrity(promise.id)
+      if (res.intact) {
+        setIntegrityStatus(`✓ Chain intact · ${res.event_count} events verified`)
+      } else {
+        setIntegrityStatus(`✗ Chain broken at event #${res.broken_step || 1}`)
+      }
+    } catch {
+      setIntegrityStatus('✗ Verification failed: could not reach ledger')
+    } finally {
+      setIsVerifying(false)
+    }
+  }
+
+  const handleExportReceiptJson = async () => {
+    if (!promise) return
+    try {
+      const json = await api.getReceiptJson(promise.id)
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(json, null, 2))
+      const a = document.createElement('a')
+      a.setAttribute('href', dataStr)
+      a.setAttribute('download', `promiseloop_receipt_${promise.ref || promise.id}.json`)
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+    } catch (e) {
+      console.error('Failed to export receipt json', e)
+    }
+  }
+
+  const handleExportAp2Mandate = async () => {
+    if (!promise) return
+    try {
+      const mandate = await api.getAp2Mandate(promise.id)
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(mandate, null, 2))
+      const a = document.createElement('a')
+      a.setAttribute('href', dataStr)
+      a.setAttribute('download', `ap2_mandate_${promise.ref || promise.id}.json`)
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+    } catch (e) {
+      console.error('Failed to export AP2 mandate', e)
+    }
+  }
+
+  const handleVerifyOffline = async () => {
+    if (!promise) return
+    try {
+      const json = await api.getReceiptJson(promise.id)
+      navigate('/verify', { state: { receiptJson: JSON.stringify(json, null, 2) } })
+    } catch {
+      navigate('/verify')
+    }
   }
 
   const handleReconcile = async () => {
@@ -188,6 +244,14 @@ export const ReceiptPage: React.FC = () => {
                 Open drift review
               </Button>
             )}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleVerifyOffline}
+              icon={<ExternalLink className="w-4 h-4" />}
+            >
+              Verify offline
+            </Button>
             <Button
               variant="secondary"
               size="sm"
@@ -439,6 +503,12 @@ export const ReceiptPage: React.FC = () => {
                     <span className="font-semibold text-[var(--color-muted)]">Awaiting …</span>
                   )}
                 </div>
+                {promise.payment.state === 'captured' && (
+                  <div className="flex items-center justify-between pt-1 border-t border-[var(--color-line)]">
+                    <span>PayPal Orders v2 tracking</span>
+                    <span className="font-semibold text-[var(--color-ok)]">Pushed ✓</span>
+                  </div>
+                )}
               </div>
 
               {/* Actions */}
@@ -482,7 +552,7 @@ export const ReceiptPage: React.FC = () => {
                 The hash protects the snapshot, not external truth.
               </p>
 
-              <div className="pt-2">
+              <div className="pt-2 space-y-2">
                 <Button
                   size="sm"
                   variant="secondary"
@@ -491,8 +561,37 @@ export const ReceiptPage: React.FC = () => {
                   onClick={handleVerifyIntegrity}
                   icon={<ShieldCheck className="w-4 h-4" />}
                 >
-                  Verify integrity
+                  Verify ledger integrity
                 </Button>
+
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="w-full"
+                  onClick={handleVerifyOffline}
+                  icon={<ExternalLink className="w-4 h-4" />}
+                >
+                  Verify offline in browser
+                </Button>
+
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleExportReceiptJson}
+                    icon={<Download className="w-3.5 h-3.5" />}
+                  >
+                    Receipt JSON
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleExportAp2Mandate}
+                    icon={<FileCode className="w-3.5 h-3.5" />}
+                  >
+                    AP2 Mandate
+                  </Button>
+                </div>
 
                 {integrityStatus && (
                   <p

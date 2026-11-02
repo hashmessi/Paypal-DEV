@@ -143,6 +143,61 @@ export const api = {
     return p
   },
 
+  async getReceiptJson(id: string): Promise<Record<string, unknown>> {
+    const remote = await apiFetch<Record<string, unknown>>(`/receipts/${id}`)
+    if (remote) return remote
+    const p = await this.getReceipt(id)
+    return {
+      version: p.version,
+      currency: p.payment.currency,
+      total_cents: p.payment.amount_cents,
+      receipt_hash: p.receipt_hash,
+      constraints: p.constraints,
+      product_snapshot: p.product_snapshot,
+      merchant_quote: p.merchant_quote,
+      capture_conditions: {
+        require_carrier_acceptance: true,
+        reject_refurbished: p.constraints.condition?.toLowerCase() === 'new',
+        max_delivery_days: p.constraints.deadline_days || 5,
+        expected_sku: (p.merchant_quote as unknown as { sku?: string }).sku || 'WH1000XM5-BLK-NEW',
+        expected_color: p.constraints.variant_color || 'black',
+      },
+    }
+  },
+
+  async getAp2Mandate(id: string): Promise<Record<string, unknown>> {
+    const remote = await apiFetch<Record<string, unknown>>(`/receipts/${id}/ap2`)
+    if (remote) return remote
+    const p = await this.getReceipt(id)
+    return {
+      specification: 'AP2 v0.2 (Google Agent Payments Protocol) + PromiseLoop Settlement Gate',
+      mandate_version: '0.2',
+      purchase_id: p.id,
+      receipt_hash: p.receipt_hash,
+      status: p.status,
+      open_checkout_mandate: {
+        '@type': 'ap2:open_checkout_mandate:v0.2',
+        mandate_id: `urn:ap2:mandate:open:${p.id}`,
+        version: '0.2',
+        intent_type: 'COMMERCE_PURCHASE',
+        user_authorization: { status: 'APPROVED', instruction: p.buyer_instruction },
+        constraints: p.constraints,
+        merchant_allowlist: [p.merchant_quote.seller_domain],
+      },
+      closed_checkout_mandate: {
+        '@type': 'ap2:closed_checkout_mandate:v0.2',
+        mandate_id: `urn:ap2:mandate:closed:${p.id}`,
+        checkout_hash: p.receipt_hash,
+        payment: { provider: 'PAYPAL', intent: 'AUTHORIZE', custom_id: p.receipt_hash },
+        settlement_conditions: {
+          '@extension': 'promiseloop:settlement_gate:v1',
+          capture_trigger: 'DETERMINISTIC_FULFILLMENT_MATCH',
+          reject_refurbished: p.constraints.condition?.toLowerCase() === 'new',
+        },
+      },
+    }
+  },
+
   async getTower(): Promise<{ kpis: TowerKPIs; promises: PurchasePromise[]; openDriftCount: number }> {
     const remote = await apiFetch<{ kpis: TowerKPIs; promises: PurchasePromise[]; openDriftCount: number }>('/tower')
     if (remote) return remote

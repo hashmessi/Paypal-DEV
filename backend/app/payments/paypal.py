@@ -355,3 +355,39 @@ class PayPalGateway:
 
         result = resp.json()
         return result.get("verification_status") == "SUCCESS"
+
+    async def push_tracking(
+        self,
+        order_id: str,
+        capture_id: str,
+        carrier: str,
+        tracking_number: str,
+        sku: str,
+    ) -> dict[str, Any]:
+        """Push verified shipment tracking and item SKU to PayPal Orders v2 tracking API."""
+        url = f"{self.api_base}/v2/checkout/orders/{order_id}/track"
+        auth_headers = await self._auth_headers()
+        payload = {
+            "capture_id": capture_id,
+            "tracking_number": tracking_number,
+            "carrier": (carrier or "OTHER").upper(),
+            "status": "SHIPPED",
+            "items": [
+                {
+                    "name": "Verified Invariant Product",
+                    "quantity": "1",
+                    "sku": sku or "WH1000XM5-BLK-NEW",
+                }
+            ],
+        }
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(url, headers=auth_headers, json=payload, timeout=20.0)
+            if resp.status_code in (200, 201):
+                logger.info("Successfully pushed tracking for order %s to PayPal", order_id)
+                return resp.json()
+            logger.warning("PayPal tracking push returned %s: %s", resp.status_code, resp.text)
+            return {"status": "FAILED", "code": resp.status_code, "detail": resp.text}
+        except Exception as e:
+            logger.error("Failed to push tracking to PayPal for order %s: %s", order_id, e)
+            return {"status": "ERROR", "error": str(e)}
