@@ -6,8 +6,31 @@ import {
   getGatePill,
   getReceiptPill,
   getPromiseStateHeaderPill,
+  type PillTone,
 } from '../../lib/status'
 import type { PaymentState, GateOutcome, ReceiptStatus, Finding } from '../../types/api'
+
+export interface StatusPillProps {
+  tone?: PillTone
+  dot?: boolean
+  icon?: React.ReactNode
+  children?: React.ReactNode
+  className?: string
+}
+
+export const StatusPill: React.FC<StatusPillProps> = ({
+  tone = 'neutral',
+  dot = false,
+  icon,
+  children,
+  className,
+}) => {
+  return (
+    <Badge tone={tone} dot={dot} icon={icon} className={className}>
+      {children}
+    </Badge>
+  )
+}
 
 export interface AuthorizationPillProps {
   state: PaymentState

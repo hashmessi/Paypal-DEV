@@ -103,6 +103,7 @@ export interface PaymentDetails {
   state: PaymentState
   amount_cents: number
   currency: string
+  is_simulated?: boolean
   expiration_time: string | null
   honor_until: string | null
   captured_at: string | null

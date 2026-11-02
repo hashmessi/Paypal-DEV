@@ -111,6 +111,7 @@ def _promise(db: Session, p: Purchase) -> Dict[str, Any]:
             "captured_at": _iso(a.captured_at) if a else None,
             "voided_at": _iso(a.voided_at) if a else None,
             "void_reason": a.void_reason if a else None,
+            "is_simulated": gateway_is_simulated(),
             "updated_at": _iso(a.updated_at) if a else _iso(p.updated_at),
         },
         "gate_decision": _decision(g, r.receipt_hash if r else ""),

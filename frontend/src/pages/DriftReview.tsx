@@ -9,6 +9,7 @@ import { EvidenceCompare } from '../components/domain/EvidenceCompare'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { FindingBanner } from '../components/domain/FindingBanner'
 import { SyntheticBadge } from '../components/domain/TrustBadge'
+import { TruthPanel } from '../components/domain/TruthPanel'
 import { PromiseHeaderPill } from '../components/domain/StatusPill'
 import { Skeleton } from '../components/ui/Skeleton'
 import { EmptyState } from '../components/ui/EmptyState'
@@ -206,6 +207,8 @@ export const DriftReviewPage: React.FC = () => {
 
         {/* Right Column (4 cols): Available Operator Actions */}
         <div className="lg:col-span-4 space-y-6">
+          <TruthPanel promise={promise} />
+
           <Card title="Available actions" subtitle="Operator resolution controls">
             <div className="space-y-3 pt-2">
               <div className="p-3 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] space-y-2">
