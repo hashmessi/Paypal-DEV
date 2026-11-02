@@ -16,6 +16,7 @@ import {
 } from '../components/domain/StatusPill'
 import { TrustBadge, SyntheticBadge } from '../components/domain/TrustBadge'
 import { Timeline } from '../components/domain/Timeline'
+import { TruthPanel } from '../components/domain/TruthPanel'
 import { ScenarioConsole } from '../components/domain/ScenarioConsole'
 import { FindingBanner } from '../components/domain/FindingBanner'
 import { formatMinor } from '../lib/money'
@@ -419,121 +420,76 @@ export const ReceiptPage: React.FC = () => {
 
         {/* Right Column: PayPal transaction Card (4 cols, 360px) */}
         <div className="lg:col-span-4 space-y-6">
-          <Card padding="md" title="PayPal transaction" subtitle="Real Orders v2 & Payments v2 Sandbox">
-            <div className="space-y-4">
-              {/* Display Amount */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-[#003087]/5 to-[#0070ba]/10 border border-[#0070ba]/20 space-y-0.5">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
-                  Authorized settlement hold
-                </p>
-                <p className="text-[28px] font-semibold tabular-nums text-[var(--color-ink)] leading-tight mt-0.5">
-                  {formatMinor(promise.payment.amount_cents)}{' '}
-                  <span className="text-[18px] text-[var(--color-muted)] font-normal">
-                    {promise.payment.currency}
-                  </span>
-                </p>
-                <span className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-ok)] inline mr-1" /> PayPal Orders v2 & Payments v2 Sandbox
-                </span>
+          <TruthPanel promise={promise}>
+            {/* State-dependent settlement note; the escrow disclaimer applies only while funds are held */}
+            {(() => {
+              const note = PAYMENT_NOTE[promise.payment.state]
+              return (
+                <div
+                  className={`p-3 rounded-[var(--radius-control)] border text-[12px] leading-relaxed ${NOTE_TONE[note.tone]}`}
+                >
+                  {note.text}
+                </div>
+              )
+            })()}
+
+            {/* Evidence sources checklist */}
+            <div className="p-3 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] space-y-2 text-[12px]">
+              <p className="font-semibold uppercase tracking-wider text-[var(--color-muted)] text-[12px]">
+                Evidence sources
+              </p>
+              <div className="flex items-center justify-between">
+                <span>Buyer instruction</span>
+                <span className="font-semibold text-[var(--color-ok)]">Confirmed ✓</span>
               </div>
-
-              {/* ID rows */}
-              <div className="space-y-2 text-[14px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--color-muted)]">Order ID</span>
-                  <HashChip value={promise.payment.order_id || '3KX8291048194'} kind="paypal" full />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--color-muted)]">Authorization ID</span>
-                  <HashChip value={promise.payment.authorization_id || '9K3184920194'} kind="paypal" full />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--color-muted)]">Payment state</span>
-                  <AuthorizationPill state={promise.payment.state} />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--color-muted)]">Capture ID</span>
-                  {promise.payment.capture_id ? (
-                    <HashChip value={promise.payment.capture_id} kind="paypal" full />
-                  ) : (
-                    <span className="text-[var(--color-muted)]">Not submitted</span>
-                  )}
-                </div>
+              <div className="flex items-center justify-between">
+                <span>Product snapshot</span>
+                <span className="font-semibold text-[var(--color-ok)]">Stored ✓</span>
               </div>
-
-              {/* State-dependent settlement note; the escrow disclaimer applies only while funds are held */}
-              {(() => {
-                const note = PAYMENT_NOTE[promise.payment.state]
-                return (
-                  <div
-                    className={`p-3 rounded-[var(--radius-control)] border text-[12px] leading-relaxed ${NOTE_TONE[note.tone]}`}
-                  >
-                    {note.text}
-                  </div>
-                )
-              })()}
-
-              {/* Evidence sources checklist */}
-              <div className="p-3 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] space-y-2 text-[12px]">
-                <p className="font-semibold uppercase tracking-wider text-[var(--color-muted)] text-[12px]">
-                  Evidence sources
-                </p>
-                <div className="flex items-center justify-between">
-                  <span>Buyer instruction</span>
-                  <span className="font-semibold text-[var(--color-ok)]">Confirmed ✓</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Product snapshot</span>
-                  <span className="font-semibold text-[var(--color-ok)]">Stored ✓</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Merchant promise</span>
-                  <span className="font-semibold text-[var(--color-ok)]">Stored ✓</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Fulfillment events</span>
-                  {promise.gate_decision?.outcome === 'DRIFT' ? (
-                    <span className="font-semibold text-[var(--color-bad)]">Mismatch ✕</span>
-                  ) : promise.payment.state === 'captured' ? (
-                    <span className="font-semibold text-[var(--color-ok)]">Verified ✓</span>
-                  ) : (
-                    <span className="font-semibold text-[var(--color-muted)]">Awaiting …</span>
-                  )}
-                </div>
-                {promise.payment.state === 'captured' && (
-                  <div className="flex items-center justify-between pt-1 border-t border-[var(--color-line)]">
-                    <span>PayPal Orders v2 tracking</span>
-                    <span className="font-semibold text-[var(--color-ok)]">Pushed ✓</span>
-                  </div>
+              <div className="flex items-center justify-between">
+                <span>Merchant promise</span>
+                <span className="font-semibold text-[var(--color-ok)]">Stored ✓</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Fulfillment events</span>
+                {promise.gate_decision?.outcome === 'DRIFT' ? (
+                  <span className="font-semibold text-[var(--color-bad)]">Mismatch ✕</span>
+                ) : promise.payment.state === 'captured' ? (
+                  <span className="font-semibold text-[var(--color-ok)]">Verified ✓</span>
+                ) : (
+                  <span className="font-semibold text-[var(--color-muted)]">Awaiting …</span>
                 )}
               </div>
-
-              {/* Actions */}
-              <div className="pt-2 flex items-center justify-between">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  loading={isReconciling}
-                  onClick={handleReconcile}
-                  icon={<RefreshCw className="w-3.5 h-3.5" />}
-                >
-                  Reconcile
-                </Button>
-
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => navigate(`/receipts/${promise.id}/replay`)}
-                  icon={<History className="w-3.5 h-3.5" />}
-                >
-                  Audit replay
-                </Button>
-              </div>
+              {promise.payment.state === 'captured' && (
+                <div className="flex items-center justify-between pt-1 border-t border-[var(--color-line)]">
+                  <span>PayPal Orders v2 tracking</span>
+                  <span className="font-semibold text-[var(--color-ok)]">Pushed ✓</span>
+                </div>
+              )}
             </div>
-          </Card>
+
+            {/* Actions */}
+            <div className="pt-2 flex items-center justify-between">
+              <Button
+                size="sm"
+                variant="secondary"
+                loading={isReconciling}
+                onClick={handleReconcile}
+                icon={<RefreshCw className="w-3.5 h-3.5" />}
+              >
+                Reconcile
+              </Button>
+
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => navigate(`/receipts/${promise.id}/replay`)}
+                icon={<History className="w-3.5 h-3.5" />}
+              >
+                Audit replay
+              </Button>
+            </div>
+          </TruthPanel>
 
           {/* Receipt integrity Card */}
           <Card padding="md" title="Receipt integrity" subtitle="Snapshot verification">

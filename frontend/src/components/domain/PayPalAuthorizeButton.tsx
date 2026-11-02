@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   PayPalScriptProvider,
   PayPalButtons,
@@ -16,8 +16,13 @@ export interface PayPalAuthorizeButtonProps {
   onError?: (err: unknown) => void
 }
 
-const PAYPAL_CLIENT_ID =
-  (import.meta.env.VITE_PAYPAL_CLIENT_ID as string | undefined) || 'test'
+const rawCid = import.meta.env.VITE_PAYPAL_CLIENT_ID as string | undefined
+const PAYPAL_CLIENT_ID = (rawCid || '').trim()
+const isRealSdkConfigured = Boolean(
+  PAYPAL_CLIENT_ID &&
+  PAYPAL_CLIENT_ID !== 'test' &&
+  PAYPAL_CLIENT_ID !== 'sandbox_test'
+)
 
 export const PayPalAuthorizeButton: React.FC<PayPalAuthorizeButtonProps> = ({
   receiptId,
@@ -32,6 +37,12 @@ export const PayPalAuthorizeButton: React.FC<PayPalAuthorizeButtonProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const amountDollars = (amountCents / 100).toFixed(2)
+
+  const scriptOptions = useMemo(() => ({
+    clientId: PAYPAL_CLIENT_ID,
+    intent: 'authorize',
+    currency: currency,
+  }), [PAYPAL_CLIENT_ID, currency])
 
   // Fallback demo authorization for rapid evaluation without sandbox keys
   const handleSimulatedApproval = async () => {
@@ -51,19 +62,10 @@ export const PayPalAuthorizeButton: React.FC<PayPalAuthorizeButtonProps> = ({
     }
   }
 
-  // If real client ID is configured and not 'test', use real PayPal JS SDK
-  const isRealSdkConfigured = PAYPAL_CLIENT_ID && PAYPAL_CLIENT_ID !== 'test'
-
   return (
     <div className="space-y-3">
       {isRealSdkConfigured ? (
-        <PayPalScriptProvider
-          options={{
-            clientId: PAYPAL_CLIENT_ID,
-            intent: 'authorize',
-            currency: currency,
-          }}
-        >
+        <PayPalScriptProvider options={scriptOptions}>
           <div className="max-w-[360px]">
             <PayPalButtons
               style={{ layout: 'vertical', color: 'blue', shape: 'rect', label: 'pay' }}
@@ -76,7 +78,7 @@ export const PayPalAuthorizeButton: React.FC<PayPalAuthorizeButtonProps> = ({
                         currency_code: currency,
                         value: amountDollars,
                       },
-                      custom_id: `purchase:${receiptHash.slice(0, 16)}`,
+                      custom_id: receiptHash.startsWith('sha256:') ? receiptHash : 'sha256:' + receiptHash,
                       description: `PromiseLoop Receipt ${receiptId}`,
                     },
                   ],

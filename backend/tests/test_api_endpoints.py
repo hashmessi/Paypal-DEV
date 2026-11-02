@@ -155,3 +155,20 @@ def test_webhook_endpoint_flow(client: TestClient):
     )
     assert dup_resp.status_code == 200
     assert dup_resp.json()["status"] == "duplicate"
+
+
+def test_promise_endpoint_is_simulated(client: TestClient):
+    """GET /promises/{id} surfaces payment.is_simulated boolean flag."""
+    resp = client.post(
+        "/checkout/orders",
+        json={"ref": "ORD-SIM-001", "amount_cents": 5000, "currency": "USD"},
+    )
+    assert resp.status_code == 201
+    purchase_id = resp.json()["purchase_id"]
+
+    p_resp = client.get(f"/promises/{purchase_id}")
+    assert p_resp.status_code == 200
+    data = p_resp.json()
+    assert "payment" in data
+    assert "is_simulated" in data["payment"]
+    assert isinstance(data["payment"]["is_simulated"], bool)
