@@ -6,7 +6,7 @@ import logging
 from typing import Any, Optional
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.core.canon import canonical_json
@@ -18,6 +18,7 @@ from app.payments.state import (
     CaptureBlockedByGateError,
     IllegalStateTransitionError,
     PaymentState,
+    PaymentStateError,
     TerminalStateError,
     is_terminal,
     validate_transition,
@@ -149,6 +150,16 @@ class PaymentsService:
         validate_transition(auth.state, PaymentState.AUTHORIZED.value)
 
         gateway_res = await self.gateway.authorize_order(order_id)
+        # Only a CREATED authorization for the exact approved amount holds funds; PENDING/DENIED must not be recorded as AUTHORIZED
+        if (
+            gateway_res.get("status") != "CREATED"
+            or gateway_res.get("amount_cents") != auth.amount_cents
+            or gateway_res.get("currency") != auth.currency
+        ):
+            raise PaymentStateError(
+                f"PayPal authorization for order {order_id} not usable: status={gateway_res.get('status')}, "
+                f"amount_cents={gateway_res.get('amount_cents')}, currency={gateway_res.get('currency')}"
+            )
 
         auth_id = gateway_res["authorization_id"]
         exp_time = gateway_res.get("expiration_time")
@@ -245,6 +256,10 @@ class PaymentsService:
         if is_terminal(auth.state):
             raise TerminalStateError(auth.state, "capture")
 
+        target_amount = amount_cents if amount_cents is not None else auth.amount_cents
+        if target_amount > auth.amount_cents:
+            raise ValueError(f"Capture amount {target_amount} exceeds authorized amount {auth.amount_cents}")
+
         # PAY-02: Settlement Gate Enforce - Capture is allowed ONLY on MATCH
         # If gate is DRIFT / HOLD / PROHIBITED, capture is blocked locally without contacting PayPal
         from app.drift.models import GateOutcome
@@ -252,7 +267,10 @@ class PaymentsService:
 
         fulfillment_svc = FulfillmentService(self.session, self.clock)
         gate = fulfillment_svc.reevaluate_gate(purchase_id)
-        if gate is not None and gate.outcome != GateOutcome.MATCH:
+        # Fail closed: without a receipt there is no buyer-approved promise to settle against
+        if gate is None:
+            raise CaptureBlockedByGateError("Capture blocked: no Promise Receipt bound to this purchase", outcome="NO_RECEIPT")
+        if gate.outcome != GateOutcome.MATCH:
             raise CaptureBlockedByGateError(
                 f"Capture blocked by gate: outcome is {gate.outcome.value} ({gate.status_pill}). {gate.explanation}",
                 outcome=gate.outcome.value,
@@ -270,11 +288,17 @@ class PaymentsService:
             )
             self.session.add(fin_act)
 
-        # CAS update to capturing
+        # Atomic CAS: only one concurrent request can move AUTHORIZED -> CAPTURING
+        claimed = self.session.execute(
+            update(PaymentAuthorization)
+            .where(PaymentAuthorization.id == auth.id, PaymentAuthorization.state == auth.state)
+            .values(state=PaymentState.CAPTURING.value)
+            .execution_options(synchronize_session=False)
+        ).rowcount
+        if claimed != 1:
+            raise PaymentStateError("Capture already in progress for this authorization")
         auth.state = PaymentState.CAPTURING.value
         self.session.commit()
-
-        target_amount = amount_cents if amount_cents is not None else auth.amount_cents
 
         try:
             res = await self.gateway.capture_authorization(

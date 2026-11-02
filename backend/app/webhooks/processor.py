@@ -10,7 +10,7 @@ from app.core.canon import canonical_json
 from app.core.clock import Clock, SystemClock
 from app.core.models import PaymentAuthorization, WebhookEvent
 from app.ledger.events import append_event
-from app.payments.state import PaymentState
+from app.payments.state import PaymentState, is_terminal
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +77,11 @@ class WebhookProcessor:
         auth = self.session.execute(auth_stmt).scalars().first()
 
         if auth:
-            # Reconcile state based on webhook event_type without initiating captures
-            if event_type == "PAYMENT.AUTHORIZATION.VOIDED":
+            # Reconcile state based on webhook event_type without initiating captures.
+            # Terminal states are immutable: a late void/expiry must never rewrite a captured authorization.
+            if is_terminal(auth.state):
+                pass
+            elif event_type == "PAYMENT.AUTHORIZATION.VOIDED":
                 auth.state = PaymentState.VOIDED.value
                 auth.voided_at = self.clock.now()
                 auth.void_reason = "Webhook void notification"

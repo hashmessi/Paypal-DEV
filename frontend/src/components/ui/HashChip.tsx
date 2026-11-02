@@ -33,15 +33,15 @@ export const HashChip: React.FC<HashChipProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] text-[12px] font-mono text-[var(--color-ink)] select-all whitespace-nowrap ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] hover:border-[var(--color-line-strong)] hover:bg-white text-[12px] font-mono text-[var(--color-ink)] select-all whitespace-nowrap transition-colors shadow-2xs ${className}`}
       title={value}
     >
-      <span>{displayText}</span>
+      <span className="truncate">{displayText}</span>
       {copyable && (
         <button
           type="button"
           onClick={handleCopy}
-          className="p-0.5 text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors rounded focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]"
+          className="p-0.5 -mr-0.5 text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors rounded focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] cursor-pointer"
           aria-label={`Copy ${kind} ${value}`}
         >
           {copied ? (
@@ -57,4 +57,3 @@ export const HashChip: React.FC<HashChipProps> = ({
     </span>
   )
 }
-

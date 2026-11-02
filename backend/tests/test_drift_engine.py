@@ -29,6 +29,8 @@ def create_mock_receipt(
         version=1,
         receipt_hash="0" * 64,
         capture_conditions_json=json.dumps(conditions),
+        total_cents=39900,
+        currency="USD",
         created_at=created_at,
     )
 

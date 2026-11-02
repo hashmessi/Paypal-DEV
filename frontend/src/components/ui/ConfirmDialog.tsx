@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from './Button'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, X } from 'lucide-react'
 
 export interface ConfirmDialogProps {
   isOpen: boolean
@@ -75,15 +75,24 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="dialog-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-none"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-150"
     >
       <div
         ref={dialogRef}
-        className="w-full max-w-lg bg-[var(--color-surface)] rounded-[var(--radius-card)] border border-[var(--color-line)] shadow-lg p-6 space-y-4 animate-in fade-in duration-100"
+        className="w-full max-w-lg bg-white rounded-2xl border border-[var(--color-line)] shadow-[var(--shadow-modal)] p-6 space-y-5 animate-in zoom-in-95 duration-150 relative"
       >
-        <div className="flex items-start gap-3">
+        <button
+          type="button"
+          onClick={handleClose}
+          className="absolute top-5 right-5 p-1 rounded-md text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:bg-[var(--color-inset)] transition-colors focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] cursor-pointer"
+          aria-label="Close dialog"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="flex items-start gap-3.5 pr-6">
           {destructive && (
-            <div className="p-2 rounded-full bg-[var(--color-bad-soft)] text-[var(--color-bad)] shrink-0">
+            <div className="p-2.5 rounded-xl bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)] shrink-0">
               <AlertTriangle className="w-5 h-5" aria-hidden="true" />
             </div>
           )}
@@ -96,15 +105,15 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </div>
 
         {requireReason && (
-          <div className="space-y-1.5 pt-2">
-            <label htmlFor="void-reason-select" className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-ink)]">
+          <div className="space-y-1.5 pt-1">
+            <label htmlFor="void-reason-select" className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-ink)] block">
               Reason code (required)
             </label>
             <select
               id="void-reason-select"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full h-10 px-3 bg-white border border-[var(--color-line-strong)] rounded-[var(--radius-control)] text-[14px] text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2"
+              className="w-full h-10 px-3 bg-white border border-[var(--color-line)] hover:border-[var(--color-line-strong)] rounded-[var(--radius-control)] text-[14px] text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2 transition-colors cursor-pointer"
               required
             >
               {reasonOptions.map((opt) => (

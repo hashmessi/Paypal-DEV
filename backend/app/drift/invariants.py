@@ -40,6 +40,26 @@ def check_auth_expiry(
     return findings
 
 
+def check_amount_binding(
+    receipt: PromiseReceipt,
+    auth: Optional[PaymentAuthorization],
+) -> List[Finding]:
+    """INV-07 (PAY-02): the authorization must hold exactly the buyer-approved receipt total."""
+    if not auth:
+        return []
+    if auth.amount_cents == receipt.total_cents and auth.currency == receipt.currency:
+        return []
+    return [
+        Finding(
+            invariant_code="INV-07-AMOUNT",
+            severity=Severity.BLOCKER,
+            message="Authorized amount does not match the approved Promise Receipt total. Capture blocked.",
+            expected=f"{receipt.total_cents} {receipt.currency}",
+            actual=f"{auth.amount_cents} {auth.currency}",
+        )
+    ]
+
+
 def check_fulfillment_invariants(
     receipt: PromiseReceipt,
     evidence_list: List[FulfillmentEvidence],

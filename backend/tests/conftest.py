@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 import sys
 from pathlib import Path
-from typing import Generator
+from typing import Callable, Generator
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -17,7 +17,7 @@ if str(backend_path) not in sys.path:
 
 from app.api.deps import get_clock, get_db, get_gateway
 from app.core.clock import FixedClock
-from app.core.models import Base
+from app.core.models import Base, FulfillmentEvidence, PromiseReceipt
 from app.main import app
 from app.payments.fake import FakeGateway
 
@@ -53,6 +53,44 @@ def db_session() -> Generator[Session, None, None]:
 @pytest.fixture
 def fake_gateway() -> FakeGateway:
     return FakeGateway()
+
+
+@pytest.fixture
+def bind_receipt(db_session: Session, fixed_now: datetime) -> Callable[[str, int], None]:
+    """Attach an approved Promise Receipt and carrier evidence so the gate can return MATCH."""
+
+    def _bind(purchase_id: str, total_cents: int) -> None:
+        db_session.add(
+            PromiseReceipt(
+                purchase_id=purchase_id,
+                version=1,
+                status="active",
+                receipt_hash="0" * 64,
+                canonical_payload="{}",
+                constraints_json="{}",
+                product_snapshot_json="{}",
+                merchant_quote_json="{}",
+                capture_conditions_json="{}",
+                total_cents=total_cents,
+                currency="USD",
+                created_at=fixed_now,
+            )
+        )
+        db_session.add(
+            FulfillmentEvidence(
+                purchase_id=purchase_id,
+                seq=1,
+                source="carrier",
+                external_event_id="EVT-BIND-1",
+                trust_level="CARRIER_TELEMETRY",
+                carrier_status="ACCEPTED",
+                raw_payload="{}",
+                recorded_at=fixed_now,
+            )
+        )
+        db_session.commit()
+
+    return _bind
 
 
 @pytest.fixture

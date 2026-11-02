@@ -94,7 +94,7 @@ export const ProofPage: React.FC = () => {
       {/* 6 Metric Cards with Numerator / Denominator Large */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {metrics.map((m, idx) => (
-          <Card key={idx} padding="md">
+          <Card key={idx} padding="md" hoverEffect>
             <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
               {m.title}
             </p>

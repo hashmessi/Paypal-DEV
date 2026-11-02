@@ -27,6 +27,12 @@ import {
   AlertTriangle,
   CheckCircle2,
   RefreshCw,
+  Package,
+  Palette,
+  DollarSign,
+  Store,
+  Truck,
+  FileCheck,
 } from 'lucide-react'
 
 const NOTE_TONE = {
@@ -218,6 +224,9 @@ export const ReceiptPage: React.FC = () => {
                 <span className="font-mono text-[12px] font-semibold text-[var(--color-accent)] tracking-wider">
                   PROMISE RECEIPT · {promise.ref}
                 </span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-full bg-[var(--color-accent-soft)] text-[var(--color-accent)] border border-[var(--color-accent-line)]">
+                  <FileCheck className="w-3 h-3" /> RFC 8785 Sealed
+                </span>
                 <AuthorizationPill state={promise.payment.state} />
               </div>
               <h2 className="text-[18px] font-semibold text-[var(--color-ink)] leading-snug">
@@ -250,7 +259,7 @@ export const ReceiptPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-[14px]">
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
                   <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Product
+                    <span className="inline-flex items-center gap-1.5"><Package className="w-3.5 h-3.5 text-[var(--color-muted)]" /> Product</span>
                   </p>
                   <p className="font-semibold text-[var(--color-ink)] mt-1 break-words">
                     {promise.constraints.product_type}
@@ -259,21 +268,21 @@ export const ReceiptPage: React.FC = () => {
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
                   <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Variant
+                    <span className="inline-flex items-center gap-1.5"><Palette className="w-3.5 h-3.5 text-[var(--color-muted)]" /> Variant</span>
                   </p>
                   <p className="font-semibold text-[var(--color-ink)] mt-1">{promise.constraints.variant_color}</p>
                 </div>
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
                   <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Condition
+                    <span className="inline-flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-[var(--color-ok)]" /> Condition</span>
                   </p>
                   <p className="font-semibold text-[var(--color-ok)] mt-1">{promise.constraints.condition}</p>
                 </div>
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
                   <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Max total
+                    <span className="inline-flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5 text-[var(--color-muted)]" /> Max total</span>
                   </p>
                   <p className="font-semibold tabular-nums text-[var(--color-ink)] mt-1">
                     {formatMinor(promise.constraints.max_total_cents)} USD
@@ -282,7 +291,7 @@ export const ReceiptPage: React.FC = () => {
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
                   <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Merchant
+                    <span className="inline-flex items-center gap-1.5"><Store className="w-3.5 h-3.5 text-[var(--color-muted)]" /> Merchant</span>
                   </p>
                   <p className="font-mono text-[12px] text-[var(--color-ink)] mt-1 truncate">
                     {promise.merchant_quote.seller_domain}
@@ -291,7 +300,7 @@ export const ReceiptPage: React.FC = () => {
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
                   <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Delivery limit
+                    <span className="inline-flex items-center gap-1.5"><Truck className="w-3.5 h-3.5 text-[var(--color-muted)]" /> Delivery limit</span>
                   </p>
                   <p className="font-semibold text-[var(--color-ink)] mt-1">
                     Within {promise.constraints.deadline_days} days
@@ -349,9 +358,9 @@ export const ReceiptPage: React.FC = () => {
           <Card padding="md" title="PayPal transaction" subtitle="Real Orders v2 & Payments v2 Sandbox">
             <div className="space-y-4">
               {/* Display Amount */}
-              <div className="py-2 border-b border-[var(--color-line)]">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-[#003087]/5 to-[#0070ba]/10 border border-[#0070ba]/20 space-y-0.5">
                 <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
-                  Authorized amount
+                  Authorized settlement hold
                 </p>
                 <p className="text-[28px] font-semibold tabular-nums text-[var(--color-ink)] leading-tight mt-0.5">
                   {formatMinor(promise.payment.amount_cents)}{' '}
@@ -360,7 +369,7 @@ export const ReceiptPage: React.FC = () => {
                   </span>
                 </p>
                 <span className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
-                  Sandbox authorization
+                  <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-ok)] inline mr-1" /> PayPal Orders v2 & Payments v2 Sandbox
                 </span>
               </div>
 

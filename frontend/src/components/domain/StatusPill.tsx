@@ -17,7 +17,7 @@ export interface AuthorizationPillProps {
 export const AuthorizationPill: React.FC<AuthorizationPillProps> = ({ state, className }) => {
   const info = getAuthorizationPill(state)
   return (
-    <Badge tone={info.tone} className={className}>
+    <Badge tone={info.tone} dot={true} className={className}>
       {info.label}
     </Badge>
   )
@@ -36,12 +36,13 @@ export const GatePill: React.FC<GatePillProps> = ({ outcome, findings, className
   return (
     <Badge
       tone={info.tone}
-      icon={isDrift ? <OctagonAlert className="w-3.5 h-3.5" aria-hidden="true" /> : undefined}
+      dot={!isDrift}
+      icon={isDrift ? <OctagonAlert className="w-3.5 h-3.5 text-current shrink-0" aria-hidden="true" /> : undefined}
       className={className}
     >
       <span>{info.label}</span>
       {info.code && isDrift && (
-        <span className="font-mono text-[12px] opacity-75 ml-1">({info.code})</span>
+        <span className="font-mono text-[11px] opacity-80 ml-1">({info.code})</span>
       )}
     </Badge>
   )
@@ -55,7 +56,7 @@ export interface ReceiptPillProps {
 export const ReceiptPill: React.FC<ReceiptPillProps> = ({ status, className }) => {
   const info = getReceiptPill(status)
   return (
-    <Badge tone={info.tone} className={className}>
+    <Badge tone={info.tone} dot={true} className={className}>
       {info.label}
     </Badge>
   )
@@ -73,15 +74,16 @@ export const PromiseHeaderPill: React.FC<PromiseHeaderPillProps> = ({
   className,
 }) => {
   const info = getPromiseStateHeaderPill(paymentState, gateOutcome)
+  const isDrift = info.icon === 'octagon-alert'
 
   return (
     <Badge
       tone={info.tone}
-      icon={info.icon === 'octagon-alert' ? <OctagonAlert className="w-3.5 h-3.5" aria-hidden="true" /> : undefined}
+      dot={!isDrift}
+      icon={isDrift ? <OctagonAlert className="w-3.5 h-3.5 text-current shrink-0" aria-hidden="true" /> : undefined}
       className={className}
     >
       {info.label}
     </Badge>
   )
 }
-

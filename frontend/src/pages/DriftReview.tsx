@@ -4,6 +4,7 @@ import { useReceipt } from '../queries/useReceipt'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
+import { Badge } from '../components/ui/Badge'
 import { EvidenceCompare } from '../components/domain/EvidenceCompare'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { FindingBanner } from '../components/domain/FindingBanner'
@@ -157,7 +158,7 @@ export const DriftReviewPage: React.FC = () => {
 
               <div className="py-3 flex justify-between items-center">
                 <span className="font-semibold text-[var(--color-ink)]">Product Identity & SKU</span>
-                <span className="text-[var(--color-ok)] font-semibold">PASS</span>
+                <Badge tone="ok">PASS</Badge>
                 <span className="text-[var(--color-muted)]">None</span>
               </div>
 
@@ -166,25 +167,25 @@ export const DriftReviewPage: React.FC = () => {
                   <p className="font-semibold text-[var(--color-bad)]">Condition Invariant</p>
                   <p className="text-[12px] text-[var(--color-muted)] font-mono">rules.condition</p>
                 </div>
-                <span className="text-[var(--color-bad)] font-semibold uppercase">DRIFT</span>
+                <Badge tone="bad">DRIFT</Badge>
                 <span className="font-semibold text-[var(--color-bad)]">HOLD_CAPTURE</span>
               </div>
 
               <div className="py-3 flex justify-between items-center">
                 <span className="font-semibold text-[var(--color-ink)]">Spending Limit Invariant</span>
-                <span className="text-[var(--color-ok)] font-semibold">PASS ({formatMinor(promise.payment.amount_cents)})</span>
+                <Badge tone="ok">PASS</Badge>
                 <span className="text-[var(--color-muted)]">None</span>
               </div>
 
               <div className="py-3 flex justify-between items-center">
                 <span className="font-semibold text-[var(--color-ink)]">Carrier Acceptance Scan</span>
-                <span className="text-[var(--color-warn)] font-semibold">PENDING</span>
+                <Badge tone="warn">PENDING</Badge>
                 <span className="text-[var(--color-muted)]">Awaiting UPS scan</span>
               </div>
 
               <div className="py-3 flex justify-between items-center">
                 <span className="font-semibold text-[var(--color-ink)]">Authorization Expiry Window</span>
-                <span className="text-[var(--color-ok)] font-semibold">VALID</span>
+                <Badge tone="ok">VALID</Badge>
                 <span className="text-[var(--color-muted)]">Active</span>
               </div>
             </div>

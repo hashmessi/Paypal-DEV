@@ -4,6 +4,7 @@ import {
   PayPalButtons,
 } from '@paypal/react-paypal-js'
 import { Button } from '../ui/Button'
+import { ShieldCheck, Lock } from 'lucide-react'
 
 export interface PayPalAuthorizeButtonProps {
   receiptId: string
@@ -109,32 +110,38 @@ export const PayPalAuthorizeButton: React.FC<PayPalAuthorizeButtonProps> = ({
           </div>
         </PayPalScriptProvider>
       ) : (
-        <div className="space-y-2 max-w-[360px]">
+        <div className="space-y-2.5 max-w-[360px]">
           <Button
-            variant="primary"
+            variant="paypal"
             size="md"
-            className="w-full h-11 text-[14px] bg-[#0070BA] hover:bg-[#003087] font-semibold text-white shadow-none"
+            className="w-full h-12 text-[15px] font-bold tracking-tight rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-transform active:scale-[0.99]"
             loading={loading}
             onClick={handleSimulatedApproval}
           >
-            Authorize {amountDollars} {currency} with PayPal
+            <span className="font-extrabold text-[16px] italic text-[#003087]">Pay<span className="text-[#0070BA]">Pal</span></span>
+            <span className="text-[#003087] font-semibold text-[14px]">Authorize hold (${amountDollars} {currency})</span>
           </Button>
-          <div className="flex items-center justify-between text-[12px] text-[var(--color-muted)] px-1">
-            <span>PayPal Sandbox Mode</span>
-            <span>custom_id anchor active</span>
+
+          <div className="flex items-center justify-between text-[11px] text-[var(--color-muted)] px-1">
+            <span className="flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-ok)]" />
+              <span>Orders v2 sandbox active</span>
+            </span>
+            <span className="font-mono opacity-80">custom_id bound</span>
           </div>
         </div>
       )}
 
       {errorMsg && (
-        <p className="text-[12px] text-[var(--color-bad)] font-semibold" role="alert">
+        <p className="text-[12px] text-[var(--color-bad)] font-semibold p-2 bg-[var(--color-bad-soft)] rounded-md border border-[var(--color-bad-line)]" role="alert">
           {errorMsg}
         </p>
       )}
 
-      <p className="text-[12px] text-[var(--color-muted)] font-normal">
-        Authorized, not captured. Not an escrow service.
-      </p>
+      <div className="flex items-start gap-1.5 text-[11px] text-[var(--color-muted)] font-normal leading-tight">
+        <Lock className="w-3 h-3 text-[var(--color-muted)] shrink-0 mt-0.5" />
+        <span>Authorized, not captured. Funds remain in buyer's account until verified proof.</span>
+      </div>
     </div>
   )
 }
