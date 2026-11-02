@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(default="promiseloop-dev-secret-key-change-in-prod")
     CORS_ORIGINS: Union[str, List[str]] = Field(default=["*"])
     PORT: int = Field(default=8000)
+    FRONTEND_BASE_URL: str = Field(default="http://localhost:5173", description="Public UI origin used in MCP approval links")
 
     @field_validator("CORS_ORIGINS", mode="after")
     @classmethod

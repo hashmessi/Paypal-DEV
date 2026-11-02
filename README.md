@@ -55,6 +55,18 @@ The AP2 v0.2 field-level mapping has **not** been checked against the spec yet; 
 
 Not yet used. `<fill in once the APIMatic PayPal Context Plugin has been run: what it was used for and what changed>`
 
+## Agent MCP gate (no money tools)
+
+An MCP server lets an AI agent search offers and *propose* a Promise Receipt, then read the gate verdict and replay. It exposes exactly four tools: `search_offers`, `compile_promise`, `get_gate_verdict`, `get_replay`. **There are no money tools**: no authorize, capture, void, reconcile or approve. `compile_promise` returns a draft receipt plus an `approval_url`; a human approves it in the UI. A test (`backend/tests/test_mcp_gate.py`) enforces the tool list and that the server never imports the payments, webhooks or API layers.
+
+Run (stdio): `cd backend && python -m app.mcp_server`. Example client config:
+
+```json
+{ "mcpServers": { "promiseloop-gate": { "command": "python", "args": ["-m", "app.mcp_server"], "cwd": "backend" } } }
+```
+
+Set `FRONTEND_BASE_URL` (default `http://localhost:5173`) so approval links point at your UI.
+
 ## Architecture
 
 React + Vite + TypeScript + Tailwind (AG Grid Community for the Control Tower) → FastAPI modular monolith → PostgreSQL. PayPal calls (create, authorize, capture, void) are server-side only; the browser sees only the public client ID.
