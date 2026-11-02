@@ -312,7 +312,7 @@ export const TowerPage: React.FC = () => {
       />
 
       {/* 4 KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <StatCard
           label="Active promises"
           value={kpis.active_promises}
@@ -339,6 +339,13 @@ export const TowerPage: React.FC = () => {
           caption={`${kpis.authorized_not_captured_count} open holds`}
           tone={kpis.authorized_not_captured_count > 0 ? 'warn' : 'default'}
           icon={<Lock className="w-4 h-4 text-[var(--color-warn)]" />}
+        />
+        <StatCard
+          label="$ protected"
+          value={formatMinor(kpis.loss_avoided_cents ?? 0)}
+          caption={kpis.loss_avoided_simulated ? 'Loss avoided · simulated' : 'Loss avoided vs naive agent'}
+          tone={(kpis.loss_avoided_cents ?? 0) > 0 ? 'ok' : 'default'}
+          icon={<ShieldCheck className="w-4 h-4 text-[var(--color-ok)]" />}
         />
       </div>
 

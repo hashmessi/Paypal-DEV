@@ -28,3 +28,4 @@ class ReplayData(BaseModel):
     gate_outcome: Optional[str] = None
     status_pill: Optional[str] = None
 
+    counterfactual: Optional[Dict[str, Any]] = None

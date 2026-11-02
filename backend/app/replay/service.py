@@ -16,6 +16,7 @@ from app.core.models import (
     Purchase,
 )
 from app.ledger.verify import verify_chain
+from app.proof.counterfactual import counterfactual, gateway_is_simulated
 from app.replay.models import ReplayData, ReplayStep
 
 logger = logging.getLogger(__name__)
@@ -299,6 +300,18 @@ class ReplayService:
             if s.status in ("COMPLETED", "DIVERGED", "BLOCKED", "FAILED"):
                 active_step = s.step_number
 
+        auth = self.db.execute(
+            select(PaymentAuthorization).where(PaymentAuthorization.purchase_id == purchase_id)
+        ).scalars().first()
+        has_ev = self.db.execute(
+            select(FulfillmentEvidence.id).where(FulfillmentEvidence.purchase_id == purchase_id).limit(1)
+        ).first() is not None
+        amount = auth.amount_cents if auth else 0
+        cf = {
+            **counterfactual(amount, has_ev, amount if auth and auth.state == "captured" else 0),
+            "simulated": gateway_is_simulated(),
+        }
+
         return ReplayData(
             purchase_id=purchase_id,
             steps=all_steps,
@@ -310,5 +323,6 @@ class ReplayService:
             broken_step=broken_seq,
             gate_outcome=gate_outcome,
             status_pill=status_pill,
+            counterfactual=cf,
         )
 

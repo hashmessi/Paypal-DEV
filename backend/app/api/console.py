@@ -23,6 +23,7 @@ from app.core.models import (
 )
 from app.payments.port import PaymentGateway
 from app.payments.service import PaymentsService
+from app.proof.counterfactual import counterfactual, gateway_is_simulated
 from app.proof.runner import run_proof
 from app.receipt.compiler import compile_canonical_receipt
 from app.receipt.service import ReceiptService
@@ -83,6 +84,8 @@ def _promise(db: Session, p: Purchase) -> Dict[str, Any]:
     a = db.execute(select(PaymentAuthorization).where(PaymentAuthorization.purchase_id == p.id)).scalars().first()
     g = db.execute(select(GateEvaluationRecord).where(GateEvaluationRecord.purchase_id == p.id).order_by(GateEvaluationRecord.evaluated_at.desc()).limit(1)).scalars().first()
     ev = db.execute(select(FulfillmentEvidence).where(FulfillmentEvidence.purchase_id == p.id).order_by(FulfillmentEvidence.seq)).scalars().all()
+    amount = a.amount_cents if a else 0
+    cf = counterfactual(amount, bool(ev), amount if a and a.state == "captured" else 0)
     snap, quote, cons = (_json(r.product_snapshot_json), _json(r.merchant_quote_json), _json(r.constraints_json)) if r else ({}, {}, {})
     return {
         "id": p.id,
@@ -121,6 +124,7 @@ def _promise(db: Session, p: Purchase) -> Dict[str, Any]:
             }
             for e in ev
         ],
+        "counterfactual": {**cf, "simulated": gateway_is_simulated()},
         "lifecycle": [],
         "created_at": _iso(p.created_at),
         "updated_at": _iso(p.updated_at),
@@ -142,6 +146,8 @@ async def tower(db: Session = Depends(get_db)):
             "review_required": len(review),
             "authorized_not_captured_cents": sum(x["payment"]["amount_cents"] for x in held),
             "authorized_not_captured_count": len(held),
+            "loss_avoided_cents": sum(x["counterfactual"]["loss_avoided_cents"] for x in promises),
+            "loss_avoided_simulated": gateway_is_simulated(),
         },
         "promises": promises,
         "openDriftCount": len(review),

@@ -18,6 +18,7 @@ from sqlalchemy.pool import StaticPool
 from app.core.clock import FixedClock
 from app.core.models import Base, FulfillmentEvidence, PaymentAuthorization, PromiseReceipt, Purchase
 from app.drift.engine import evaluate
+from app.proof.counterfactual import counterfactual
 from app.payments.fake import FakeGateway
 from app.payments.service import PaymentsService
 
@@ -120,6 +121,7 @@ def run_proof() -> Dict[str, Any]:
             id=c["id"], name=c["name"], category=c["category"], expected_outcome=c["expected"],
             actual_outcome=g.outcome.value, can_capture=g.can_capture,
             finding_codes=[f.invariant_code for f in g.findings], passed=g.outcome.value == c["expected"],
+            counterfactual=counterfactual(auth.amount_cents, bool(c["ev"]), auth.amount_cents if g.can_capture else 0),
         ))
 
     bad = [s for s in scenarios if s["expected_outcome"] != "MATCH"]
@@ -147,4 +149,6 @@ def run_proof() -> Dict[str, Any]:
         m("Expiry handling", sum(s["actual_outcome"] == "PROHIBITED" for s in expiry), len(expiry), "scenarios",
           "Expired authorizations correctly prohibited from capture."),
     ]
-    return {"metrics": metrics, "scenarios": scenarios}
+    avoided = [s["counterfactual"]["loss_avoided_cents"] for s in scenarios]
+    protected = dict(loss_avoided_cents=sum(avoided), scenarios_blocked=sum(a > 0 for a in avoided), simulated=True)
+    return {"metrics": metrics, "scenarios": scenarios, "protected": protected}

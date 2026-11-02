@@ -111,6 +111,19 @@ export interface PaymentDetails {
   updated_at: string
 }
 
+export interface Counterfactual {
+  naive_capture_cents: number
+  gated_capture_cents: number
+  loss_avoided_cents: number
+  simulated?: boolean
+}
+
+export interface ProofProtected {
+  loss_avoided_cents: number
+  scenarios_blocked: number
+  simulated: boolean
+}
+
 export interface PurchasePromise {
   id: string
   ref: string // PL-XXXXXX
@@ -127,6 +140,7 @@ export interface PurchasePromise {
   gate_decision: Decision | null
   evidence_events: FulfillmentEvent[]
   lifecycle: LifecycleStepItem[]
+  counterfactual?: Counterfactual
   created_at: string
   updated_at: string
 }
@@ -153,6 +167,7 @@ export interface ReplayData {
   artifacts_verified: string // e.g. "3/3"
   custom_id_matches: boolean
   steps: ReplayAuditStep[]
+  counterfactual?: Counterfactual
 }
 
 export interface TowerKPIs {
@@ -161,6 +176,8 @@ export interface TowerKPIs {
   review_required: number
   authorized_not_captured_cents: number
   authorized_not_captured_count: number
+  loss_avoided_cents?: number
+  loss_avoided_simulated?: boolean
 }
 
 export interface ProofMetric {
@@ -180,6 +197,7 @@ export interface ProofScenario {
   actual_outcome: string
   finding_codes: string[]
   passed: boolean
+  counterfactual?: Counterfactual
 }
 
 export interface LedgerEventItem {
