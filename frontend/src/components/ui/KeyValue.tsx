@@ -34,7 +34,7 @@ export const KeyValueRow: React.FC<KeyValueRowProps> = ({
     >
       <span className="text-[var(--color-muted)] font-normal">{label}</span>
       <div className="flex items-center gap-1.5 font-semibold text-[var(--color-ink)] text-right">
-        <span className={mono ? 'font-mono text-[13px]' : ''}>{value}</span>
+        <span className={mono ? 'font-mono text-[12px]' : ''}>{value}</span>
         {(copyValue || typeof value === 'string') && copyValue !== undefined && (
           <button
             type="button"

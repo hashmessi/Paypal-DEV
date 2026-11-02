@@ -41,7 +41,7 @@ export const ReceiptsPage: React.FC = () => {
     {
       header: 'Promise Ref',
       accessor: (row: PurchasePromise) => (
-        <span className="font-mono font-semibold text-[var(--color-accent)] hover:underline">
+        <span className="font-mono font-semibold text-[var(--color-accent)] hover:underline whitespace-nowrap">
           {row.ref}
         </span>
       ),
@@ -92,7 +92,7 @@ export const ReceiptsPage: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         eyebrow="COMMERCE ACCOUNTABILITY"
-        title="Promise Receipts"
+        title="Promise receipts"
         description="Immutable registry of all buyer constraint agreements and their linked PayPal authorizations."
         actions={
           <Button
@@ -122,7 +122,7 @@ export const ReceiptsPage: React.FC = () => {
               className="w-full h-10 pl-9 pr-3 rounded-[var(--radius-control)] border border-[var(--color-line-strong)] text-[14px]"
             />
           </div>
-          <span className="text-[13px] text-[var(--color-muted)]">{filtered.length} total</span>
+          <span className="text-[14px] text-[var(--color-muted)]">{filtered.length} total</span>
         </div>
 
         <DataTable

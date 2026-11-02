@@ -63,7 +63,7 @@ export const Timeline: React.FC<TimelineProps> = ({ steps, className = '' }) => 
                 {step.ref_id && (
                   <>
                     <span>·</span>
-                    <span className="font-mono text-[11px] px-1 py-0.2 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
+                    <span className="font-mono text-[12px] px-1 py-0.2 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
                       {step.ref_id}
                     </span>
                   </>

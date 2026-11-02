@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useEvents } from '../queries/useEvents'
 import { PageHeader } from '../components/ui/PageHeader'
 import { Card } from '../components/ui/Card'
@@ -64,22 +64,20 @@ export const EventsPage: React.FC = () => {
     {
       header: 'Promise Ref',
       accessor: (row: LedgerEventItem) => (
-        <span
-          onClick={(e) => {
-            e.stopPropagation()
-            navigate(`/receipts/${row.purchase_id}`)
-          }}
-          className="font-mono font-semibold text-[var(--color-accent)] hover:underline cursor-pointer"
+        <Link
+          to={`/receipts/${row.purchase_id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="font-mono font-semibold text-[var(--color-accent)] hover:underline whitespace-nowrap"
         >
           {row.purchase_ref}
-        </span>
+        </Link>
       ),
       width: '120px',
     },
     {
       header: 'Source / Actor',
       accessor: (row: LedgerEventItem) => (
-        <div className="text-[13px]">
+        <div className="text-[14px]">
           <span className="text-[var(--color-ink)] font-semibold">{row.source}</span>
           <span className="text-[var(--color-muted)] text-[12px] ml-1.5">({row.actor})</span>
         </div>
@@ -88,7 +86,7 @@ export const EventsPage: React.FC = () => {
     {
       header: 'Payload Summary',
       accessor: (row: LedgerEventItem) => (
-        <span className="text-[13px] text-[var(--color-ink)] truncate max-w-sm block">
+        <span className="text-[14px] text-[var(--color-ink)] truncate max-w-sm block">
           {row.payload_summary}
         </span>
       ),
@@ -129,7 +127,7 @@ export const EventsPage: React.FC = () => {
               className="w-full h-10 pl-9 pr-3 rounded-[var(--radius-control)] border border-[var(--color-line-strong)] text-[14px]"
             />
           </div>
-          <span className="text-[13px] text-[var(--color-muted)]">{filtered.length} events</span>
+          <span className="text-[14px] text-[var(--color-muted)]">{filtered.length} events</span>
         </div>
 
         <DataTable

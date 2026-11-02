@@ -20,7 +20,7 @@ import { ScenarioConsole } from '../components/domain/ScenarioConsole'
 import { FindingBanner } from '../components/domain/FindingBanner'
 import { formatMinor } from '../lib/money'
 import { formatTimeOnly, formatDateTime } from '../lib/time'
-import type { FulfillmentEvent } from '../types/api'
+import type { FulfillmentEvent, PaymentState } from '../types/api'
 import {
   ShieldCheck,
   History,
@@ -28,6 +28,27 @@ import {
   CheckCircle2,
   RefreshCw,
 } from 'lucide-react'
+
+const NOTE_TONE = {
+  ok: 'bg-[var(--color-ok-soft)] border-[var(--color-ok-line)] text-[var(--color-ok)]',
+  warn: 'bg-[var(--color-warn-soft)] border-[var(--color-warn-line)] text-[var(--color-warn)]',
+  bad: 'bg-[var(--color-bad-soft)] border-[var(--color-bad-line)] text-[var(--color-bad)]',
+  neutral: 'bg-[var(--color-inset)] border-[var(--color-line)] text-[var(--color-muted)]',
+} as const
+
+const HELD = 'Authorized, not captured. Not an escrow service.'
+
+const PAYMENT_NOTE: Record<PaymentState, { tone: keyof typeof NOTE_TONE; text: string }> = {
+  created: { tone: 'neutral', text: 'Order created. Awaiting buyer approval.' },
+  approved: { tone: 'neutral', text: 'Buyer approved. Awaiting authorization.' },
+  authorized: { tone: 'warn', text: HELD },
+  capturing: { tone: 'warn', text: HELD },
+  capture_pending: { tone: 'warn', text: 'Capture submitted and pending at PayPal.' },
+  captured: { tone: 'ok', text: 'Funds captured after fulfillment was verified against this receipt.' },
+  voided: { tone: 'neutral', text: 'Authorization voided. No funds were captured.' },
+  expired: { tone: 'bad', text: 'Authorization expired. Capture is no longer possible.' },
+  failed: { tone: 'bad', text: 'Payment failed. No funds were captured.' },
+}
 
 export const ReceiptPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -116,9 +137,9 @@ export const ReceiptPage: React.FC = () => {
       header: 'Observed value',
       accessor: (row: FulfillmentEvent) => (
         <div className="flex items-center gap-2">
-          <span className="text-[13px]">{row.status_display}</span>
+          <span className="text-[14px]">{row.status_display}</span>
           {row.diff_summary && (
-            <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)]">
+            <span className="text-[12px] font-mono px-1.5 py-0.5 rounded bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)]">
               Expected: {row.diff_summary.expected}
             </span>
           )}
@@ -141,7 +162,7 @@ export const ReceiptPage: React.FC = () => {
       {/* Page Header */}
       <PageHeader
         eyebrow={`PURCHASE RECORD · VERSION ${promise.version}`}
-        title="Promise Receipt"
+        title="Promise receipt"
         description="Frozen constraints agreement protecting settlement hold. Money moves only upon deterministic fulfillment verification."
         status={
           <PromiseHeaderPill
@@ -194,12 +215,12 @@ export const ReceiptPage: React.FC = () => {
             {/* Receipt Card Header */}
             <div className="p-6 border-b border-[var(--color-line)] bg-white">
               <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
-                <span className="font-mono text-[13px] font-semibold text-[var(--color-accent)] tracking-wider">
+                <span className="font-mono text-[12px] font-semibold text-[var(--color-accent)] tracking-wider">
                   PROMISE RECEIPT · {promise.ref}
                 </span>
                 <AuthorizationPill state={promise.payment.state} />
               </div>
-              <h2 className="text-[20px] font-semibold text-[var(--color-ink)] leading-snug">
+              <h2 className="text-[18px] font-semibold text-[var(--color-ink)] leading-snug">
                 {promise.product_snapshot.title}
               </h2>
               <p className="text-[12px] text-[var(--color-muted)] mt-1">
@@ -209,7 +230,7 @@ export const ReceiptPage: React.FC = () => {
 
             {/* Section 1: Original Buyer Instruction */}
             <div className="p-6 border-b border-[var(--color-line)] bg-[var(--color-canvas)]/30 space-y-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
                 ORIGINAL BUYER INSTRUCTION
               </p>
               <blockquote className="text-[14px] font-normal text-[var(--color-ink)] italic bg-white p-3 rounded-[var(--radius-control)] border border-[var(--color-line)]">
@@ -223,36 +244,36 @@ export const ReceiptPage: React.FC = () => {
 
             {/* Section 2: Frozen Purchase Constraints (2x3 Grid) */}
             <div className="p-6 border-b border-[var(--color-line)] space-y-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
                 FROZEN PURCHASE CONSTRAINTS (HASH-LOCKED)
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-[13px]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-[14px]">
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
-                  <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
+                  <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
                     Product
                   </p>
-                  <p className="font-semibold text-[var(--color-ink)] mt-1 truncate">
+                  <p className="font-semibold text-[var(--color-ink)] mt-1 break-words">
                     {promise.constraints.product_type}
                   </p>
                 </div>
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
-                  <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
+                  <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
                     Variant
                   </p>
                   <p className="font-semibold text-[var(--color-ink)] mt-1">{promise.constraints.variant_color}</p>
                 </div>
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
-                  <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
+                  <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
                     Condition
                   </p>
                   <p className="font-semibold text-[var(--color-ok)] mt-1">{promise.constraints.condition}</p>
                 </div>
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
-                  <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Max Total
+                  <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
+                    Max total
                   </p>
                   <p className="font-semibold tabular-nums text-[var(--color-ink)] mt-1">
                     {formatMinor(promise.constraints.max_total_cents)} USD
@@ -260,7 +281,7 @@ export const ReceiptPage: React.FC = () => {
                 </div>
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
-                  <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
+                  <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
                     Merchant
                   </p>
                   <p className="font-mono text-[12px] text-[var(--color-ink)] mt-1 truncate">
@@ -269,8 +290,8 @@ export const ReceiptPage: React.FC = () => {
                 </div>
 
                 <div className="p-3 rounded bg-[var(--color-inset)] border border-[var(--color-line)]">
-                  <p className="text-[11px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
-                    Delivery Limit
+                  <p className="text-[12px] text-[var(--color-muted)] uppercase tracking-wider font-semibold">
+                    Delivery limit
                   </p>
                   <p className="font-semibold text-[var(--color-ink)] mt-1">
                     Within {promise.constraints.deadline_days} days
@@ -282,7 +303,7 @@ export const ReceiptPage: React.FC = () => {
             {/* Section 3: Gate Decision */}
             <div className="p-6 border-b border-[var(--color-line)] space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
                   GATE (LATEST DRIFT DECISION)
                 </p>
                 <GatePill outcome={promise.gate_decision?.outcome} findings={promise.gate_decision?.findings} />
@@ -315,7 +336,7 @@ export const ReceiptPage: React.FC = () => {
 
             {/* Section 4: Promise Lifecycle */}
             <div className="p-6 space-y-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
                 PROMISE LIFECYCLE
               </p>
               <Timeline steps={promise.lifecycle} />
@@ -323,36 +344,36 @@ export const ReceiptPage: React.FC = () => {
           </Card>
         </div>
 
-        {/* Right Column: PayPal Transaction Card (4 cols, 360px) */}
+        {/* Right Column: PayPal transaction Card (4 cols, 360px) */}
         <div className="lg:col-span-4 space-y-6">
-          <Card padding="md" title="PayPal Transaction" subtitle="Real Orders v2 & Payments v2 Sandbox">
+          <Card padding="md" title="PayPal transaction" subtitle="Real Orders v2 & Payments v2 Sandbox">
             <div className="space-y-4">
               {/* Display Amount */}
               <div className="py-2 border-b border-[var(--color-line)]">
                 <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
-                  Authorized Amount
+                  Authorized amount
                 </p>
                 <p className="text-[28px] font-semibold tabular-nums text-[var(--color-ink)] leading-tight mt-0.5">
                   {formatMinor(promise.payment.amount_cents)}{' '}
-                  <span className="text-[16px] text-[var(--color-muted)] font-normal">
+                  <span className="text-[18px] text-[var(--color-muted)] font-normal">
                     {promise.payment.currency}
                   </span>
                 </p>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
-                  Sandbox Authorization
+                <span className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
+                  Sandbox authorization
                 </span>
               </div>
 
               {/* ID rows */}
-              <div className="space-y-2 text-[13px]">
+              <div className="space-y-2 text-[14px]">
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--color-muted)]">Order ID</span>
-                  <HashChip value={promise.payment.order_id || '3KX8291048194'} kind="paypal" />
+                  <HashChip value={promise.payment.order_id || '3KX8291048194'} kind="paypal" full />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--color-muted)]">Authorization ID</span>
-                  <HashChip value={promise.payment.authorization_id || '9K3184920194'} kind="paypal" />
+                  <HashChip value={promise.payment.authorization_id || '9K3184920194'} kind="paypal" full />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -361,24 +382,31 @@ export const ReceiptPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--color-muted)]">Capture status</span>
+                  <span className="text-[var(--color-muted)]">Capture ID</span>
                   {promise.payment.capture_id ? (
-                    <HashChip value={promise.payment.capture_id} kind="paypal" />
+                    <HashChip value={promise.payment.capture_id} kind="paypal" full />
                   ) : (
                     <span className="text-[var(--color-muted)]">Not submitted</span>
                   )}
                 </div>
               </div>
 
-              {/* Fixed Required Caption */}
-              <div className="p-3 rounded-[var(--radius-control)] bg-[var(--color-warn-soft)]/60 border border-[var(--color-warn-line)] text-[12px] text-[var(--color-warn)] leading-relaxed font-normal">
-                Authorized, not captured. Not an escrow service.
-              </div>
+              {/* State-dependent settlement note; the escrow disclaimer applies only while funds are held */}
+              {(() => {
+                const note = PAYMENT_NOTE[promise.payment.state]
+                return (
+                  <div
+                    className={`p-3 rounded-[var(--radius-control)] border text-[12px] leading-relaxed ${NOTE_TONE[note.tone]}`}
+                  >
+                    {note.text}
+                  </div>
+                )
+              })()}
 
               {/* Evidence sources checklist */}
               <div className="p-3 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] space-y-2 text-[12px]">
-                <p className="font-semibold uppercase tracking-wider text-[var(--color-muted)] text-[11px]">
-                  Evidence Sources
+                <p className="font-semibold uppercase tracking-wider text-[var(--color-muted)] text-[12px]">
+                  Evidence sources
                 </p>
                 <div className="flex items-center justify-between">
                   <span>Buyer instruction</span>
@@ -428,9 +456,9 @@ export const ReceiptPage: React.FC = () => {
             </div>
           </Card>
 
-          {/* Receipt Integrity Card */}
-          <Card padding="md" title="Receipt Integrity" subtitle="Snapshot verification">
-            <div className="space-y-3 text-[13px]">
+          {/* Receipt integrity Card */}
+          <Card padding="md" title="Receipt integrity" subtitle="Snapshot verification">
+            <div className="space-y-3 text-[14px]">
               <div className="flex items-center justify-between">
                 <span className="text-[var(--color-muted)]">Content hash</span>
                 <HashChip value={promise.receipt_hash} kind="sha" />
@@ -441,7 +469,7 @@ export const ReceiptPage: React.FC = () => {
                 <span className="font-semibold text-[var(--color-ok)]">matches anchor ✓</span>
               </div>
 
-              <p className="text-[11px] text-[var(--color-muted)] italic">
+              <p className="text-[12px] text-[var(--color-muted)] italic">
                 The hash protects the snapshot, not external truth.
               </p>
 
@@ -473,7 +501,7 @@ export const ReceiptPage: React.FC = () => {
 
       {/* Full-width Evidence List */}
       <Card
-        title="Fulfillment Evidence Feed"
+        title="Fulfillment evidence feed"
         subtitle="Ingested events from merchant warehouse and carrier delivery networks"
       >
         <DataTable

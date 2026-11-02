@@ -62,7 +62,7 @@ export const ProofPage: React.FC = () => {
             {row.finding_codes.map((c) => (
               <span
                 key={c}
-                className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-[var(--color-inset)] border border-[var(--color-line)] text-[var(--color-bad)] font-semibold"
+                className="font-mono text-[12px] px-1.5 py-0.2 rounded bg-[var(--color-inset)] border border-[var(--color-line)] text-[var(--color-bad)] font-semibold"
               >
                 {c}
               </span>
@@ -87,7 +87,7 @@ export const ProofPage: React.FC = () => {
     <div className="space-y-8">
       <PageHeader
         eyebrow="EVIDENCE & VERIFICATION"
-        title="Proof & Technical Metrics"
+        title="Proof & technical metrics"
         description="Empirical benchmark suite measuring invariant drift precision, capture safety, and rule execution speed across labeled test scenarios."
       />
 
@@ -103,20 +103,20 @@ export const ProofPage: React.FC = () => {
                 {m.numerator}
               </span>
               <span className="text-[18px] text-[var(--color-muted)] font-normal">/</span>
-              <span className="text-[20px] tabular-nums text-[var(--color-muted)] font-normal">
+              <span className="text-[18px] tabular-nums text-[var(--color-muted)] font-normal">
                 {m.denominator}
               </span>
-              {m.unit && <span className="text-[13px] text-[var(--color-muted)] font-semibold ml-1">{m.unit}</span>}
+              {m.unit && <span className="text-[14px] text-[var(--color-muted)] font-semibold ml-1">{m.unit}</span>}
             </div>
-            <p className="text-[13px] text-[var(--color-muted)] leading-relaxed">{m.definition}</p>
-            <p className="text-[11px] font-mono text-[var(--color-line-strong)] mt-3 truncate">{m.source_run}</p>
+            <p className="text-[14px] text-[var(--color-muted)] leading-relaxed">{m.definition}</p>
+            <p className="text-[12px] font-mono text-[var(--color-muted)] mt-3 truncate">{m.source_run}</p>
           </Card>
         ))}
       </div>
 
       {/* Proves / Does Not Prove Two-Column Card */}
       <Card
-        title="System Boundaries & Claims"
+        title="System boundaries & claims"
         subtitle="Clear, honest disclosure of technical proof capabilities"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
@@ -124,7 +124,7 @@ export const ProofPage: React.FC = () => {
             <h3 className="text-[14px] font-semibold uppercase tracking-[0.04em] text-[var(--color-ok)] flex items-center gap-1.5">
               <Check className="w-4 h-4" /> What PromiseLoop Proves
             </h3>
-            <ul className="space-y-2 text-[13px] text-[var(--color-ink)]">
+            <ul className="space-y-2 text-[14px] text-[var(--color-ink)]">
               <li className="flex items-start gap-2">
                 <span className="text-[var(--color-ok)] font-bold">✓</span>
                 <span>
@@ -156,7 +156,7 @@ export const ProofPage: React.FC = () => {
             <h3 className="text-[14px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
               What PromiseLoop Does NOT Prove
             </h3>
-            <ul className="space-y-2 text-[13px] text-[var(--color-muted)]">
+            <ul className="space-y-2 text-[14px] text-[var(--color-muted)]">
               <li className="flex items-start gap-2">
                 <span>✕</span>
                 <span>
@@ -183,7 +183,7 @@ export const ProofPage: React.FC = () => {
       {/* Labeled Scenarios Table */}
       <Card
         padding="none"
-        title="Automated Acceptance Scenarios (11 Cases)"
+        title="Automated acceptance scenarios (11 cases)"
         subtitle="Table-driven invariant test suite verifying all acceptance criteria"
       >
         <DataTable
@@ -194,7 +194,7 @@ export const ProofPage: React.FC = () => {
       </Card>
 
       {/* Reference Links */}
-      <div className="flex items-center justify-between text-[13px] text-[var(--color-muted)] pt-2 border-t border-[var(--color-line)]">
+      <div className="flex items-center justify-between text-[14px] text-[var(--color-muted)] pt-2 border-t border-[var(--color-line)]">
         <span>AP2 v0.2 Protocol Specification Alignment</span>
         <span>Apache 2.0 Open Source License</span>
       </div>

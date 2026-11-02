@@ -123,7 +123,7 @@ export const DriftReviewPage: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column (8 cols): Evidence Comparison & Findings */}
+        {/* Left Column (8 cols): Evidence comparison & Findings */}
         <div className="lg:col-span-8 space-y-6">
           {/* Finding Banner */}
           <FindingBanner
@@ -133,9 +133,9 @@ export const DriftReviewPage: React.FC = () => {
             explanation={primaryFinding.explanation}
           />
 
-          {/* Evidence Comparison Cards */}
+          {/* Evidence comparison Cards */}
           <Card
-            title="Evidence Comparison"
+            title="Evidence comparison"
             subtitle="Comparing frozen receipt snapshot against ingested warehouse and tracking evidence"
           >
             <EvidenceCompare
@@ -147,9 +147,9 @@ export const DriftReviewPage: React.FC = () => {
           </Card>
 
           {/* Policy Evaluation Matrix */}
-          <Card title="Promise Drift Engine Evaluation" subtitle="Deterministic invariant policy matrix">
-            <div className="divide-y divide-[var(--color-line)] text-[13px]">
-              <div className="py-2.5 flex justify-between items-center font-semibold text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+          <Card title="Promise drift engine evaluation" subtitle="Deterministic invariant policy matrix">
+            <div className="divide-y divide-[var(--color-line)] text-[14px]">
+              <div className="py-2.5 flex justify-between items-center font-semibold text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
                 <span>Rule</span>
                 <span>Result</span>
                 <span>Enforcement Action</span>
@@ -164,7 +164,7 @@ export const DriftReviewPage: React.FC = () => {
               <div className="py-3 flex justify-between items-center bg-[var(--color-bad-soft)]/20 px-2 rounded">
                 <div>
                   <p className="font-semibold text-[var(--color-bad)]">Condition Invariant</p>
-                  <p className="text-[11px] text-[var(--color-muted)] font-mono">rules.condition</p>
+                  <p className="text-[12px] text-[var(--color-muted)] font-mono">rules.condition</p>
                 </div>
                 <span className="text-[var(--color-bad)] font-semibold uppercase">DRIFT</span>
                 <span className="font-semibold text-[var(--color-bad)]">HOLD_CAPTURE</span>
@@ -198,7 +198,7 @@ export const DriftReviewPage: React.FC = () => {
 
         {/* Right Column (4 cols): Available Operator Actions */}
         <div className="lg:col-span-4 space-y-6">
-          <Card title="Available Actions" subtitle="Operator resolution controls">
+          <Card title="Available actions" subtitle="Operator resolution controls">
             <div className="space-y-3 pt-2">
               <div className="p-3 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] space-y-2">
                 <div className="flex items-center justify-between">

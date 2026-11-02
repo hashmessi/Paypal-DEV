@@ -113,13 +113,13 @@ export const PayPalAuthorizeButton: React.FC<PayPalAuthorizeButtonProps> = ({
           <Button
             variant="primary"
             size="md"
-            className="w-full h-11 text-[15px] bg-[#0070BA] hover:bg-[#003087] font-semibold text-white shadow-none"
+            className="w-full h-11 text-[14px] bg-[#0070BA] hover:bg-[#003087] font-semibold text-white shadow-none"
             loading={loading}
             onClick={handleSimulatedApproval}
           >
             Authorize {amountDollars} {currency} with PayPal
           </Button>
-          <div className="flex items-center justify-between text-[11px] text-[var(--color-muted)] px-1">
+          <div className="flex items-center justify-between text-[12px] text-[var(--color-muted)] px-1">
             <span>PayPal Sandbox Mode</span>
             <span>custom_id anchor active</span>
           </div>

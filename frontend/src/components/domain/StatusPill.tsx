@@ -41,7 +41,7 @@ export const GatePill: React.FC<GatePillProps> = ({ outcome, findings, className
     >
       <span>{info.label}</span>
       {info.code && isDrift && (
-        <span className="font-mono text-[11px] opacity-75 ml-1">({info.code})</span>
+        <span className="font-mono text-[12px] opacity-75 ml-1">({info.code})</span>
       )}
     </Badge>
   )
@@ -77,9 +77,8 @@ export const PromiseHeaderPill: React.FC<PromiseHeaderPillProps> = ({
   return (
     <Badge
       tone={info.tone}
-      uppercase
       icon={info.icon === 'octagon-alert' ? <OctagonAlert className="w-3.5 h-3.5" aria-hidden="true" /> : undefined}
-      className={`text-[13px] px-3 py-1 font-semibold ${className || ''}`}
+      className={className}
     >
       {info.label}
     </Badge>

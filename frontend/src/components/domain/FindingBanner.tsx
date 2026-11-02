@@ -42,7 +42,7 @@ export const FindingBanner: React.FC<FindingBannerProps> = ({
           </div>
           <h2 className="text-[18px] font-semibold leading-snug">{title}</h2>
           <div className="pt-2 border-t border-current/20">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)] mb-1">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)] mb-1">
               Explanation (AI or template)
             </p>
             <p className="text-[14px] text-[var(--color-ink)] leading-relaxed">{explanation}</p>

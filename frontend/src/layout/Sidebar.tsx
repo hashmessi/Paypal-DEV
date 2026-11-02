@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router'
+import { NavLink, useLocation } from 'react-router'
 import {
   LayoutGrid,
   FileText,
@@ -18,6 +18,9 @@ export interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, onCloseMobile }) => {
+  const { pathname, search } = useLocation()
+  const onDriftView = pathname === '/tower' && new URLSearchParams(search).get('filter') === 'drift'
+
   const workspaceLinks = [
     { to: '/tower', label: 'Control tower', icon: LayoutGrid },
     { to: '/receipts', label: 'Promise receipts', icon: FileText },
@@ -31,15 +34,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
   ]
 
   const demoLinks = [
-    { to: '/', label: 'Judge Start', icon: Compass },
+    { to: '/', label: 'Judge start', icon: Compass },
     { to: '/shop', label: 'Shopper agent', icon: ShoppingBag },
     { to: '/proof', label: 'Proof', icon: ShieldCheck },
-    { to: '/spine', label: 'Spine Console', icon: Terminal },
+    { to: '/spine', label: 'Spine console', icon: Terminal },
   ]
 
   const renderNavGroup = (title: string, links: typeof workspaceLinks) => (
     <div className="space-y-1 py-2">
-      <p className="px-3 text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)] hidden md:block">
+      <p className="px-3 text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)] hidden md:block">
         {title}
       </p>
       {links.map((link) => {
@@ -50,13 +53,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
             to={link.to}
             end={link.to === '/' || link.to === '/tower'}
             onClick={onCloseMobile}
-            className={({ isActive }) =>
-              `flex items-center justify-between h-10 px-3 rounded-[var(--radius-control)] text-[14px] transition-colors ${
-                isActive
+            className={({ isActive }) => {
+              // NavLink ignores the query string, so the two /tower links are resolved by hand.
+              const active =
+                link.to === '/tower'
+                  ? pathname === '/tower' && !onDriftView
+                  : link.to === '/tower?filter=drift'
+                    ? onDriftView || pathname.startsWith('/tower/cases')
+                    : isActive
+              return `flex items-center justify-between h-10 px-3 rounded-[var(--radius-control)] text-[14px] transition-colors ${
+                active
                   ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)] font-semibold'
                   : 'text-[var(--color-ink)] hover:bg-[var(--color-canvas)] font-normal'
               }`
-            }
+            }}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
@@ -64,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
             </div>
             {link.badge !== undefined && (
               <span
-                className="px-1.5 py-0.2 rounded-full text-[11px] font-semibold bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)] shrink-0 hidden md:inline-flex"
+                className="px-1.5 py-0.2 rounded-full text-[12px] font-semibold bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)] shrink-0 hidden md:inline-flex"
                 aria-label={`${link.badge} open drift cases`}
               >
                 {link.badge}
@@ -113,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
             <p className="text-[12px] font-semibold text-[var(--color-ink)] truncate leading-tight">
               Demo Merchant A
             </p>
-            <p className="text-[11px] text-[var(--color-muted)] truncate">Merchant workspace</p>
+            <p className="text-[12px] text-[var(--color-muted)] truncate">Merchant workspace</p>
           </div>
         </div>
       </div>

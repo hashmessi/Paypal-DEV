@@ -38,7 +38,7 @@ export const ReplayStep: React.FC<ReplayStepProps> = ({ step }) => {
             <div className="flex items-center gap-2">
               <span className="text-[14px] font-semibold text-[var(--color-ink)]">{step.title}</span>
               {isDivergence && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.04em] px-2 py-0.5 rounded bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)]">
+                <span className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.04em] px-2 py-0.5 rounded bg-[var(--color-bad-soft)] text-[var(--color-bad)] border border-[var(--color-bad-line)]">
                   <AlertOctagon className="w-3 h-3" /> Divergence
                 </span>
               )}
@@ -52,7 +52,7 @@ export const ReplayStep: React.FC<ReplayStepProps> = ({ step }) => {
         <div className="flex items-center gap-2.5">
           {step.hash && <HashChip value={step.hash} kind="sha" />}
           {step.ids && step.ids.length > 0 && (
-            <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-[var(--color-inset)] border border-[var(--color-line)] text-[var(--color-muted)]">
+            <span className="font-mono text-[12px] px-1.5 py-0.5 rounded bg-[var(--color-inset)] border border-[var(--color-line)] text-[var(--color-muted)]">
               {step.ids[0]}
             </span>
           )}
@@ -63,11 +63,11 @@ export const ReplayStep: React.FC<ReplayStepProps> = ({ step }) => {
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 pt-1 border-t border-[var(--color-line)] text-[13px] space-y-2">
+        <div className="px-4 pb-4 pt-1 border-t border-[var(--color-line)] text-[14px] space-y-2">
           {step.finding && (
             <div className="p-3 rounded bg-[var(--color-bad-soft)] border border-[var(--color-bad-line)] text-[var(--color-bad)] space-y-1">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[11px] font-semibold uppercase">{step.finding.code}</span>
+                <span className="font-mono text-[12px] font-semibold uppercase">{step.finding.code}</span>
                 <span className="font-semibold">{step.finding.title}</span>
               </div>
               <p className="text-[12px] text-[var(--color-ink)]">{step.finding.explanation}</p>

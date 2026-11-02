@@ -141,7 +141,7 @@ export const ShopPage: React.FC = () => {
         <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-muted)]">
           AGENTIC COMMERCE INTERFACE
         </p>
-        <h1 className="text-[28px] font-semibold text-[var(--color-ink)]">Shopper Agent Flow</h1>
+        <h1 className="text-[28px] font-semibold text-[var(--color-ink)]">Shopper agent flow</h1>
         <p className="text-[14px] text-[var(--color-muted)] mt-0.5">
           Step 1 through Step 6: Buyer instruction, constraint freezing, receipt approval, and PayPal authorization hold.
         </p>
@@ -252,7 +252,7 @@ export const ShopPage: React.FC = () => {
                   </FormField>
                 </div>
 
-                <div className="p-3 bg-[var(--color-inset)] rounded-[var(--radius-control)] text-[13px] text-[var(--color-muted)]">
+                <div className="p-3 bg-[var(--color-inset)] rounded-[var(--radius-control)] text-[14px] text-[var(--color-muted)]">
                   Deadline resolved: <strong className="text-[var(--color-ink)]">{constraints.resolved_deadline_at.slice(0, 10)}</strong> (from server clock +{constraints.deadline_days} days)
                 </div>
 
@@ -297,7 +297,7 @@ export const ShopPage: React.FC = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
                             <h3 className="text-[14px] font-semibold text-[var(--color-ink)] truncate">{prod.title}</h3>
-                            <span className="text-[16px] font-semibold tabular-nums text-[var(--color-ink)]">
+                            <span className="text-[18px] font-semibold tabular-nums text-[var(--color-ink)]">
                               {formatMinor(prod.price_cents, prod.currency)}
                             </span>
                           </div>
@@ -320,7 +320,7 @@ export const ShopPage: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <span className="text-[12px] font-semibold text-[var(--color-ink)]">Variant color:</span>
                             {prod.variants.map((v) => (
-                              <label key={v} className="inline-flex items-center gap-1.5 text-[13px] cursor-pointer">
+                              <label key={v} className="inline-flex items-center gap-1.5 text-[14px] cursor-pointer">
                                 <input
                                   type="radio"
                                   name="color"
@@ -367,7 +367,7 @@ export const ShopPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between text-[14px]">
                     <span className="text-[var(--color-muted)]">Domain validation</span>
-                    <span className="font-mono text-[13px] text-[var(--color-ink)]">{quote.seller_domain}</span>
+                    <span className="font-mono text-[12px] text-[var(--color-ink)]">{quote.seller_domain}</span>
                   </div>
                   <div className="flex justify-between text-[14px]">
                     <span className="text-[var(--color-muted)]">Subtotal</span>
@@ -382,9 +382,9 @@ export const ShopPage: React.FC = () => {
                     <span className="tabular-nums font-semibold">{formatMinor(quote.tax_cents)}</span>
                   </div>
                   <div className="h-[1px] bg-[var(--color-line)] my-1" />
-                  <div className="flex justify-between text-[16px] font-semibold">
+                  <div className="flex justify-between text-[18px] font-semibold">
                     <span>Confirmed total</span>
-                    <span className="text-[20px] text-[var(--color-ink)] tabular-nums">
+                    <span className="text-[18px] text-[var(--color-ink)] tabular-nums">
                       {formatMinor(quote.total_cents)} USD
                     </span>
                   </div>
@@ -415,7 +415,7 @@ export const ShopPage: React.FC = () => {
                     <p className="text-[14px] font-semibold text-[var(--color-bad)] flex items-center gap-2">
                       <AlertCircle className="w-4 h-4" /> Contract rejected
                     </p>
-                    <p className="text-[13px] text-[var(--color-bad)]">
+                    <p className="text-[14px] text-[var(--color-bad)]">
                       Merchant quote total ({formatMinor(quote.total_cents)}) exceeds your approved limit of (
                       {formatMinor(constraints.max_total_cents)}). No PayPal authorization request was allowed.
                     </p>
@@ -429,7 +429,7 @@ export const ShopPage: React.FC = () => {
                         </span>
                         <HashChip value={receiptHash} kind="sha" />
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-[13px]">
+                      <div className="grid grid-cols-2 gap-2 text-[14px]">
                         <div>
                           <span className="text-[var(--color-muted)]">Item:</span>{' '}
                           <span className="font-semibold">{selectedProduct?.title}</span>
@@ -479,7 +479,7 @@ export const ShopPage: React.FC = () => {
                         Authorization Amount
                       </p>
                       <p className="text-[28px] font-semibold tabular-nums text-[var(--color-ink)]">
-                        {formatMinor(quote.total_cents)} <span className="text-[16px] text-[var(--color-muted)]">USD</span>
+                        {formatMinor(quote.total_cents)} <span className="text-[18px] text-[var(--color-muted)]">USD</span>
                       </p>
                     </div>
                     <Badge tone="warn">Authorized · not captured</Badge>
@@ -499,10 +499,10 @@ export const ShopPage: React.FC = () => {
                   <div className="p-4 rounded-[var(--radius-control)] bg-[var(--color-ok-soft)] border border-[var(--color-ok-line)] space-y-4">
                     <div className="flex items-center gap-2 text-[var(--color-ok)]">
                       <Check className="w-5 h-5 font-bold" />
-                      <span className="font-semibold text-[15px]">PayPal Sandbox Authorization Created</span>
+                      <span className="font-semibold text-[14px]">PayPal Sandbox Authorization Created</span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[13px] font-mono">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px] font-mono">
                       <div>
                         <span className="text-[var(--color-muted)]">Order ID:</span> {authData.orderId}
                       </div>
@@ -511,7 +511,7 @@ export const ShopPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <p className="text-[13px] text-[var(--color-ink)]">
+                    <p className="text-[14px] text-[var(--color-ink)]">
                       Funds are held securely. Control is transferred to the PromiseLoop drift engine.
                     </p>
 
@@ -531,8 +531,8 @@ export const ShopPage: React.FC = () => {
 
         {/* Right: Promise summary column (320px sticky) */}
         <div className="w-full lg:w-80 shrink-0 sticky top-24 space-y-4">
-          <Card padding="md" title="Promise So Far" subtitle="Summary of buyer constraints">
-            <div className="space-y-3 text-[13px] mt-2">
+          <Card padding="md" title="Promise so far" subtitle="Summary of buyer constraints">
+            <div className="space-y-3 text-[14px] mt-2">
               <div className="flex justify-between">
                 <span className="text-[var(--color-muted)]">Product</span>
                 <span className="font-semibold text-right max-w-[160px] truncate">
@@ -557,7 +557,7 @@ export const ShopPage: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--color-muted)]">Receipt hash</span>
-                <span className="font-mono text-[11px] truncate max-w-[140px]">
+                <span className="font-mono text-[12px] truncate max-w-[140px]">
                   {receiptHash ? truncateHash(receiptHash) : '—'}
                 </span>
               </div>
