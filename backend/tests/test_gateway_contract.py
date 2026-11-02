@@ -2,9 +2,12 @@
 
 import pytest
 
+from app.core.config import settings
+from app.api.deps import get_gateway, _fake_gateway_singleton
 from app.payments.fake import FakeGateway
 from app.payments.port import PaymentGateway
 from app.payments.paypal import PayPalGateway
+from app.proof.counterfactual import gateway_is_simulated
 
 
 def test_gateway_protocol_conformance():
@@ -14,6 +17,63 @@ def test_gateway_protocol_conformance():
 
     assert isinstance(fake, PaymentGateway)
     assert isinstance(paypal, PaymentGateway)
+    assert hasattr(fake, "push_tracking")
+    assert hasattr(paypal, "push_tracking")
+
+
+@pytest.mark.asyncio
+async def test_fake_gateway_push_tracking():
+    """Verify push_tracking record storage on FakeGateway."""
+    gw = FakeGateway()
+    res = await gw.push_tracking(
+        order_id="ORD-123",
+        capture_id="CAP-456",
+        carrier="UPS",
+        tracking_number="1Z9999999999999999",
+        sku="WH1000XM5-BLK-NEW",
+    )
+    assert res["status"] == "TRACKING_RECORDED"
+    assert res["order_id"] == "ORD-123"
+    assert res["capture_id"] == "CAP-456"
+    assert res["carrier"] == "UPS"
+    assert res["tracking_number"] == "1Z9999999999999999"
+    assert res["sku"] == "WH1000XM5-BLK-NEW"
+    assert len(gw.tracking_records) == 1
+    assert gw.tracking_records[0] == res
+
+
+@pytest.mark.parametrize(
+    "client_id,demo_mode,expected_simulated",
+    [
+        ("", True, True),
+        ("", False, True),
+        ("   ", True, True),
+        ("   ", False, True),
+        (None, True, True),
+        (None, False, True),
+        ("test", True, True),
+        ("test", False, True),
+        ("sandbox_test", True, True),
+        ("sandbox_test", False, True),
+        ("AX_live_sandbox_client_id_123", True, False),
+        ("AX_live_sandbox_client_id_123", False, False),
+    ],
+)
+def test_gateway_is_simulated_and_deps_matrix(monkeypatch, client_id, demo_mode, expected_simulated):
+    """Test that gateway_is_simulated decouples from DEMO_MODE and checks credentials strictly."""
+    monkeypatch.setattr(settings, "PAYPAL_CLIENT_ID", client_id)
+    monkeypatch.setattr(settings, "DEMO_MODE", demo_mode)
+
+    simulated = gateway_is_simulated()
+    assert simulated is expected_simulated
+
+    gw = get_gateway()
+    if expected_simulated:
+        assert gw is _fake_gateway_singleton
+        assert isinstance(gw, FakeGateway)
+    else:
+        assert isinstance(gw, PayPalGateway)
+        assert gw is not _fake_gateway_singleton
 
 
 @pytest.mark.asyncio

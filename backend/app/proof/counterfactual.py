@@ -6,8 +6,13 @@ from app.core.config import settings
 
 
 def gateway_is_simulated() -> bool:
-    """True when FakeGateway serves requests (single source of truth, also used by api.deps.get_gateway)."""
-    return settings.PAYPAL_CLIENT_ID in ("test", "sandbox_test") or bool(settings.DEMO_MODE)
+    """True when FakeGateway serves requests (single source of truth, also used by api.deps.get_gateway).
+
+    Evaluates to True ONLY when credentials are empty, 'test', or 'sandbox_test'.
+    DEMO_MODE does NOT force FakeGateway when valid credentials exist.
+    """
+    cid = (settings.PAYPAL_CLIENT_ID or "").strip()
+    return not cid or cid in ("test", "sandbox_test")
 
 
 def counterfactual(authorized_cents: int, has_evidence: bool, captured_cents: int) -> Dict[str, int]:
