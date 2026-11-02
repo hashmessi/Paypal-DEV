@@ -22,6 +22,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onToggleMobile }) => {
     if (pathname.startsWith('/tower/cases/')) return 'Drift review'
     if (pathname.startsWith('/tower')) return 'Control tower'
     if (pathname === '/proof') return 'Proof'
+    if (pathname === '/verify') return 'Verify receipt'
     if (pathname === '/events') return 'Event history'
     if (pathname === '/spine') return 'Spine console'
     return 'Control tower'

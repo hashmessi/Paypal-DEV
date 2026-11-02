@@ -39,6 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
     { to: '/', label: 'Judge start', icon: Compass },
     { to: '/shop', label: 'Shopper agent', icon: ShoppingBag },
     { to: '/proof', label: 'Proof', icon: ShieldCheck },
+    { to: '/verify', label: 'Verify receipt', icon: ShieldCheck },
     { to: '/spine', label: 'Spine console', icon: Terminal },
   ]
 

@@ -9,6 +9,7 @@ import { TowerPage } from './pages/Tower'
 import { DriftReviewPage } from './pages/DriftReview'
 import { EventsPage } from './pages/Events'
 import { ProofPage } from './pages/Proof'
+import { VerifyPage } from './pages/Verify'
 import { SpinePage } from './pages/Spine'
 
 export const router = createBrowserRouter([
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
       {
         path: 'proof',
         element: <ProofPage />,
+      },
+      {
+        path: 'verify',
+        element: <VerifyPage />,
       },
       {
         path: 'spine',
