@@ -23,6 +23,9 @@ import {
   AlertOctagon,
   ArrowRight,
   CheckCircle2,
+  Activity,
+  ShieldCheck,
+  Lock,
 } from 'lucide-react'
 
 // Register AG Grid modules once
@@ -314,24 +317,28 @@ export const TowerPage: React.FC = () => {
           label="Active promises"
           value={kpis.active_promises}
           caption="In-flight authorizations"
+          icon={<Activity className="w-4 h-4 text-[var(--color-accent)]" />}
         />
         <StatCard
           label="Verified outcomes"
           value={hasDecisions ? `${kpis.verified_outcomes_pct}%` : '—'}
           caption="Captured upon proof"
           tone={hasDecisions ? 'ok' : 'default'}
+          icon={<ShieldCheck className="w-4 h-4 text-[var(--color-ok)]" />}
         />
         <StatCard
           label="Review required"
           value={kpis.review_required}
           caption="Open capture holds"
           tone={kpis.review_required > 0 ? 'bad' : 'default'}
+          icon={<AlertOctagon className="w-4 h-4 text-[var(--color-bad)]" />}
         />
         <StatCard
           label="Authorized · not captured"
           value={formatMinor(kpis.authorized_not_captured_cents)}
           caption={`${kpis.authorized_not_captured_count} open holds`}
           tone={kpis.authorized_not_captured_count > 0 ? 'warn' : 'default'}
+          icon={<Lock className="w-4 h-4 text-[var(--color-warn)]" />}
         />
       </div>
 

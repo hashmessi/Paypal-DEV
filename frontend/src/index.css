@@ -6,32 +6,40 @@
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 
-  /* surfaces */
+  /* surfaces - PayPal crisp fintech palette */
   --color-surface: #ffffff;
-  --color-canvas: #f6f7fb;
-  --color-inset: #f8fafc;
-  --color-line: #e5e7eb;
-  --color-line-strong: #d1d5db;
+  --color-canvas: #f8fafc;
+  --color-inset: #f1f5f9;
+  --color-line: #e2e8f0;
+  --color-line-strong: #cbd5e1;
 
   /* text */
-  --color-ink: #0f172a;
-  --color-muted: #596579;
+  --color-ink: #0a192f;
+  --color-muted: #526071;
 
-  /* accent (reserved list in UI-SPEC) */
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-accent-soft: #eff6ff;
+  /* accent - PayPal authentic brand blue & navy */
+  --color-accent: #0070ba;
+  --color-accent-hover: #005ea6;
+  --color-accent-active: #003087;
+  --color-accent-soft: #f0f5fa;
+  --color-accent-line: #cfe2f3;
+
+  /* PayPal brand signature gold (checkout buttons / trust badges) */
+  --color-paypal-gold: #ffc439;
+  --color-paypal-gold-hover: #f2ba36;
+  --color-paypal-navy: #003087;
+  --color-paypal-blue: #0070ba;
 
   /* status tones: text / tint / border */
-  --color-ok: #15803d;
-  --color-ok-soft: #ecfdf3;
-  --color-ok-line: #bbf7d0;
+  --color-ok: #0d8244;
+  --color-ok-soft: #ecfdf5;
+  --color-ok-line: #a7f3d0;
 
   --color-warn: #b45309;
-  --color-warn-soft: #fff7e6;
-  --color-warn-line: #fde7b0;
+  --color-warn-soft: #fffbeb;
+  --color-warn-line: #fde68a;
 
-  --color-bad: #b91c1c;
+  --color-bad: #dc2626;
   --color-bad-soft: #fef2f2;
   --color-bad-line: #fecaca;
 
@@ -40,7 +48,7 @@
   --color-neutral-line: #e2e8f0;
 
   /* status tone: info (in-flight only) */
-  --color-info: #1d4ed8;
+  --color-info: #0070ba;
   --color-info-soft: #eff6ff;
   --color-info-line: #bfdbfe;
 
@@ -58,7 +66,9 @@
 
   --radius-control: 8px;
   --radius-card: 12px;
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04);
+  --shadow-card: 0 1px 3px 0 rgb(15 23 42 / 0.04), 0 1px 2px -1px rgb(15 23 42 / 0.03);
+  --shadow-card-hover: 0 4px 6px -1px rgb(15 23 42 / 0.06), 0 2px 4px -2px rgb(15 23 42 / 0.04);
+  --shadow-modal: 0 20px 25px -5px rgb(15 23 42 / 0.1), 0 8px 10px -6px rgb(15 23 42 / 0.06);
 }
 
 html {
@@ -73,6 +83,8 @@ body {
   font-feature-settings: "cv11", "ss01";
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 :focus-visible {
@@ -82,6 +94,22 @@ body {
 
 .num {
   font-variant-numeric: tabular-nums;
+}
+
+/* PayPal custom clean scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,5 @@
 import React from 'react'
+import { CheckCircle2, XCircle } from 'lucide-react'
 
 export interface EvidenceCompareProps {
   expected: string
@@ -12,29 +13,46 @@ export interface EvidenceCompareProps {
 export const EvidenceCompare: React.FC<EvidenceCompareProps> = ({
   expected,
   observed,
-  expectedSource = 'Receipt v1',
-  observedSource = 'Fulfillment adapter · EVT-0001',
-  expectedLabel = 'BUYER-APPROVED',
-  observedLabel = 'FULFILLMENT PICKED',
+  expectedSource = 'Promise Receipt v1 · Hash-sealed',
+  observedSource = 'Warehouse Fulfillment Adapter · EVT-0001',
+  expectedLabel = 'BUYER-APPROVED MANDATE',
+  observedLabel = 'OBSERVED FULFILLMENT EVIDENCE',
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-      <div className="p-4 rounded-[var(--radius-control)] border border-[var(--color-ok-line)] bg-[var(--color-ok-soft)]">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-ok)]">
-          {expectedLabel}
-        </p>
-        <p className="text-[18px] font-semibold text-[var(--color-ink)] mt-1">{expected}</p>
-        <p className="text-[12px] text-[var(--color-muted)] mt-2">Source: {expectedSource}</p>
+      {/* Expected / Buyer Approved Card */}
+      <div className="p-4 rounded-xl border border-[var(--color-ok-line)] bg-[var(--color-ok-soft)] shadow-2xs space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-bold uppercase tracking-[0.05em] text-[var(--color-ok)] flex items-center gap-1.5">
+            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+            <span>{expectedLabel}</span>
+          </p>
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-white font-semibold text-[var(--color-ok)] border border-[var(--color-ok-line)]">
+            Invariant Truth
+          </span>
+        </div>
+        <p className="text-[18px] font-bold text-[var(--color-ink)] leading-snug">{expected}</p>
+        <div className="pt-2 border-t border-[var(--color-ok-line)]/50 text-[11px] text-[var(--color-muted)] font-mono truncate">
+          Source: {expectedSource}
+        </div>
       </div>
 
-      <div className="p-4 rounded-[var(--radius-control)] border border-[var(--color-bad-line)] bg-[var(--color-bad-soft)]">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--color-bad)]">
-          {observedLabel}
-        </p>
-        <p className="text-[18px] font-semibold text-[var(--color-bad)] mt-1">{observed}</p>
-        <p className="text-[12px] text-[var(--color-muted)] mt-2">Source: {observedSource}</p>
+      {/* Observed / Mismatch Card */}
+      <div className="p-4 rounded-xl border border-[var(--color-bad-line)] bg-[var(--color-bad-soft)] shadow-2xs space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-bold uppercase tracking-[0.05em] text-[var(--color-bad)] flex items-center gap-1.5">
+            <XCircle className="w-3.5 h-3.5 shrink-0" />
+            <span>{observedLabel}</span>
+          </p>
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-white font-bold text-[var(--color-bad)] border border-[var(--color-bad-line)]">
+            DRIFT DETECTED
+          </span>
+        </div>
+        <p className="text-[18px] font-bold text-[var(--color-bad)] leading-snug">{observed}</p>
+        <div className="pt-2 border-t border-[var(--color-bad-line)]/50 text-[11px] text-[var(--color-muted)] font-mono truncate">
+          Source: {observedSource}
+        </div>
       </div>
     </div>
   )
 }
-

@@ -11,7 +11,7 @@ def test_health_check(client: TestClient):
     assert resp.json()["status"] == "healthy"
 
 
-def test_checkout_and_capture_flow(client: TestClient):
+def test_checkout_and_capture_flow(client: TestClient, bind_receipt):
     """Full lifecycle: create order -> authorize -> capture -> verify ledger."""
     # 1. Create order
     order_payload = {
@@ -25,6 +25,7 @@ def test_checkout_and_capture_flow(client: TestClient):
     order_data = resp.json()
     purchase_id = order_data["purchase_id"]
     order_id = order_data["order_id"]
+    bind_receipt(purchase_id, 8999)
     assert order_id.startswith("ORDER-")
     assert "approval_url" in order_data
 

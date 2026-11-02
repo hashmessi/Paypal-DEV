@@ -26,7 +26,7 @@ def test_deterministic_request_id_consistency():
 
 @pytest.mark.asyncio
 async def test_duplicate_capture_returns_cached_result(
-    db_session: Session, fake_gateway: FakeGateway, fixed_clock: FixedClock
+    db_session: Session, fake_gateway: FakeGateway, fixed_clock: FixedClock, bind_receipt
 ):
     """Ensure sending two capture requests returns the identical payload and executes only one gateway capture."""
     service = PaymentsService(session=db_session, gateway=fake_gateway, clock=fixed_clock)
@@ -38,6 +38,7 @@ async def test_duplicate_capture_returns_cached_result(
     )
     purchase_id = order["purchase_id"]
     order_id = order["order_id"]
+    bind_receipt(purchase_id, 5000)
 
     await service.authorize_order(order_id=order_id)
 

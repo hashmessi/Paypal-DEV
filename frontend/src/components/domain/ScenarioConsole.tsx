@@ -1,7 +1,17 @@
 import React, { useState } from 'react'
 import { Button } from '../ui/Button'
 import { SyntheticBadge } from './TrustBadge'
-import { Clock } from 'lucide-react'
+import {
+  Clock,
+  PackageX,
+  Palette,
+  CheckCircle2,
+  Tag,
+  CalendarClock,
+  CopyCheck,
+  TrendingUp,
+  Terminal,
+} from 'lucide-react'
 
 export interface ScenarioConsoleProps {
   onTriggerScenario: (
@@ -45,7 +55,7 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
     setLastMessage(null)
     try {
       await onTriggerScenario(key)
-      setLastMessage(`Evidence dispatched: ${label}`)
+      setLastMessage(`Dispatched: ${label} → Promise Drift Engine re-evaluated gate.`)
     } catch (err) {
       setLastMessage(`Error: ${String(err)}`)
     } finally {
@@ -54,30 +64,39 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
   }
 
   return (
-    <div className="p-5 rounded-[var(--radius-card)] border-2 border-[var(--color-warn-line)] bg-white space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--color-warn-line)]/50 pb-3">
-        <div className="flex items-center gap-2 flex-wrap">
-          <h3 className="text-[14px] font-semibold uppercase tracking-[0.04em] text-[var(--color-warn)]">
-            Scenario console
-          </h3>
-          <SyntheticBadge />
+    <div className="p-6 rounded-2xl border border-[var(--color-line)] bg-white shadow-xs space-y-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[var(--color-line)] pb-4">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="p-1.5 rounded-lg bg-[var(--color-warn-soft)] text-[var(--color-warn)] border border-[var(--color-warn-line)]">
+            <Terminal className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-[14px] font-bold uppercase tracking-[0.04em] text-[var(--color-ink)]">
+                Scenario fulfillment simulation console
+              </h3>
+              <SyntheticBadge />
+            </div>
+            <p className="text-[12px] text-[var(--color-muted)] mt-0.5">
+              Injects realistic carrier & warehouse webhook events into the deterministic drift engine.
+            </p>
+          </div>
         </div>
-        <p className="text-[12px] text-[var(--color-muted)]">
-          Sends simulated fulfillment evidence. Does not execute payments.
-        </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Drift Triggers */}
         <Button
           size="sm"
           variant="secondary"
           disabled={loading || isTerminal}
           loading={activeAction === 'refurbished'}
-          onClick={() => handleAction('refurbished', 'Item Condition Refurbished')}
-          className="text-left justify-start"
-          title={isTerminal ? 'Disabled: payment is in terminal state' : undefined}
+          onClick={() => handleAction('refurbished', 'Item Condition Refurbished (INV-01 Drift)')}
+          icon={<PackageX className="w-3.5 h-3.5 text-[var(--color-bad)]" />}
+          className="text-left justify-start h-10 px-3 hover:border-[var(--color-bad-line)] hover:bg-[var(--color-bad-soft)]/40"
+          title={isTerminal ? 'Disabled: payment is in terminal state' : 'Inject condition mismatch (REFURBISHED)'}
         >
-          Send refurbished item
+          <span className="truncate">Refurbished item</span>
         </Button>
 
         <Button
@@ -85,34 +104,39 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           variant="secondary"
           disabled={loading || isTerminal}
           loading={activeAction === 'wrong_color'}
-          onClick={() => handleAction('wrong_color', 'Color Silver picked')}
-          className="text-left justify-start"
-          title={isTerminal ? 'Disabled: payment is in terminal state' : undefined}
+          onClick={() => handleAction('wrong_color', 'Color Silver Picked (INV-02 Drift)')}
+          icon={<Palette className="w-3.5 h-3.5 text-[var(--color-bad)]" />}
+          className="text-left justify-start h-10 px-3 hover:border-[var(--color-bad-line)] hover:bg-[var(--color-bad-soft)]/40"
+          title={isTerminal ? 'Disabled: payment is in terminal state' : 'Inject color variant drift (SILVER)'}
         >
-          Send wrong color
+          <span className="truncate">Wrong color</span>
         </Button>
 
+        {/* Resolution / Match */}
         <Button
           size="sm"
           variant="secondary"
           disabled={loading || paymentState === 'captured'}
           loading={activeAction === 'corrected'}
-          onClick={() => handleAction('corrected', 'Correct SKU + Carrier scan')}
-          className="text-left justify-start font-semibold border-[var(--color-ok-line)] text-[var(--color-ok)] hover:bg-[var(--color-ok-soft)]"
-          title={paymentState === 'captured' ? 'Disabled: already captured' : undefined}
+          onClick={() => handleAction('corrected', 'Exact SKU + Carrier scan (Gate MATCH)')}
+          icon={<CheckCircle2 className="w-3.5 h-3.5 text-[var(--color-ok)]" />}
+          className="text-left justify-start h-10 px-3 font-semibold border-[var(--color-ok-line)] text-[var(--color-ok)] hover:bg-[var(--color-ok-soft)]"
+          title={paymentState === 'captured' ? 'Disabled: already captured' : 'Inject verified match'}
         >
-          Send correct item + carrier
+          <span className="truncate">Correct item + Carrier</span>
         </Button>
 
+        {/* Holds */}
         <Button
           size="sm"
           variant="secondary"
           disabled={loading || isTerminal}
           loading={activeAction === 'label_only'}
-          onClick={() => handleAction('label_only', 'Label created (no scan)')}
-          className="text-left justify-start"
+          onClick={() => handleAction('label_only', 'Label created, awaiting carrier scan (HOLD)')}
+          icon={<Tag className="w-3.5 h-3.5 text-[var(--color-warn)]" />}
+          className="text-left justify-start h-10 px-3 hover:border-[var(--color-warn-line)] hover:bg-[var(--color-warn-soft)]/40"
         >
-          Send label only (no scan)
+          <span className="truncate">Label only (no scan)</span>
         </Button>
 
         <Button
@@ -120,10 +144,11 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           variant="secondary"
           disabled={loading || isTerminal}
           loading={activeAction === 'late_eta'}
-          onClick={() => handleAction('late_eta', 'Carrier reported delayed ETA')}
-          className="text-left justify-start"
+          onClick={() => handleAction('late_eta', 'Carrier reported delayed ETA past deadline (HOLD)')}
+          icon={<CalendarClock className="w-3.5 h-3.5 text-[var(--color-warn)]" />}
+          className="text-left justify-start h-10 px-3 hover:border-[var(--color-warn-line)] hover:bg-[var(--color-warn-soft)]/40"
         >
-          Send late ETA
+          <span className="truncate">Late ETA reported</span>
         </Button>
 
         <Button
@@ -131,10 +156,11 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           variant="secondary"
           disabled={loading || isTerminal}
           loading={activeAction === 'duplicate_event'}
-          onClick={() => handleAction('duplicate_event', 'Replayed duplicate event')}
-          className="text-left justify-start"
+          onClick={() => handleAction('duplicate_event', 'Replayed duplicate event (Idempotent deduplication)')}
+          icon={<CopyCheck className="w-3.5 h-3.5 text-[var(--color-neutral)]" />}
+          className="text-left justify-start h-10 px-3 hover:bg-[var(--color-inset)]"
         >
-          Replay duplicate event
+          <span className="truncate">Duplicate event</span>
         </Button>
 
         <Button
@@ -142,10 +168,11 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           variant="secondary"
           disabled={loading || isTerminal}
           loading={activeAction === 'price_change'}
-          onClick={() => handleAction('price_change', 'Merchant raised price')}
-          className="text-left justify-start"
+          onClick={() => handleAction('price_change', 'Merchant quote price shifted (STALE terms)')}
+          icon={<TrendingUp className="w-3.5 h-3.5 text-[var(--color-warn)]" />}
+          className="text-left justify-start h-10 px-3 hover:border-[var(--color-warn-line)] hover:bg-[var(--color-warn-soft)]/40"
         >
-          Merchant changes price
+          <span className="truncate">Merchant changes price</span>
         </Button>
 
         <Button
@@ -153,11 +180,11 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           variant="secondary"
           disabled={loading}
           loading={activeAction === 'advance_clock'}
-          onClick={() => handleAction('advance_clock', 'Clock offset +30 days')}
-          icon={<Clock className="w-3.5 h-3.5" />}
-          className="text-left justify-start text-[var(--color-warn)] border-[var(--color-warn-line)]"
+          onClick={() => handleAction('advance_clock', 'Clock offset +30 days (Simulate expiration)')}
+          icon={<Clock className="w-3.5 h-3.5 text-[var(--color-bad)]" />}
+          className="text-left justify-start h-10 px-3 text-[var(--color-bad)] border-[var(--color-bad-line)] hover:bg-[var(--color-bad-soft)]"
         >
-          Advance demo clock +30d
+          <span className="truncate">Advance clock +30d</span>
         </Button>
       </div>
 
@@ -165,10 +192,10 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
         <div
           role="status"
           aria-live="polite"
-          className="text-[12px] font-mono p-2 rounded bg-[var(--color-inset)] text-[var(--color-ink)] border border-[var(--color-line)] flex items-center gap-2"
+          className="text-[12px] font-mono p-3 rounded-lg bg-[var(--color-inset)] text-[var(--color-ink)] border border-[var(--color-line)] flex items-center gap-2.5 animate-in fade-in duration-150"
         >
-          <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-ping" />
-          <span>{lastMessage}</span>
+          <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse shrink-0" />
+          <span className="truncate">{lastMessage}</span>
         </div>
       )}
     </div>

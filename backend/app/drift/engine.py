@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from app.core.models import FulfillmentEvidence, PaymentAuthorization, PromiseReceipt
 from app.drift.explainer import generate_explanation
-from app.drift.invariants import check_auth_expiry, check_fulfillment_invariants
+from app.drift.invariants import check_amount_binding, check_auth_expiry, check_fulfillment_invariants
 from app.drift.models import Finding, GateEvaluation, GateOutcome, Severity
 
 
@@ -31,6 +31,9 @@ def evaluate(
     # 2. Check fulfillment telemetry invariants
     fulf_findings = check_fulfillment_invariants(receipt=receipt, evidence_list=evidence_list, now=now)
     findings.extend(fulf_findings)
+
+    # 2b. Check the authorized amount is the approved receipt total
+    findings.extend(check_amount_binding(receipt=receipt, auth=auth))
 
     # 3. Determine Outcome
     has_expiry_blocker = any(f.invariant_code == "INV-06-EXPIRY" for f in findings)

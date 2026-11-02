@@ -4,16 +4,20 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string
   subtitle?: string
   action?: React.ReactNode
+  icon?: React.ReactNode
   tone?: 'default' | 'bad' | 'warn' | 'ok'
   padding?: 'none' | 'sm' | 'md' | 'lg'
+  hoverEffect?: boolean
 }
 
 export const Card: React.FC<CardProps> = ({
   title,
   subtitle,
   action,
+  icon,
   tone = 'default',
   padding = 'lg',
+  hoverEffect = false,
   children,
   className = '',
   ...props
@@ -22,13 +26,17 @@ export const Card: React.FC<CardProps> = ({
   let bgClass = 'bg-[var(--color-surface)]'
 
   if (tone === 'bad') {
-    borderClass = 'border-[var(--color-bad-line)]'
+    borderClass = 'border-[var(--color-bad-line)] ring-1 ring-[var(--color-bad-line)]/50'
     bgClass = 'bg-[var(--color-surface)]'
   } else if (tone === 'warn') {
-    borderClass = 'border-[var(--color-warn-line)]'
+    borderClass = 'border-[var(--color-warn-line)] ring-1 ring-[var(--color-warn-line)]/50'
   } else if (tone === 'ok') {
-    borderClass = 'border-[var(--color-ok-line)]'
+    borderClass = 'border-[var(--color-ok-line)] ring-1 ring-[var(--color-ok-line)]/50'
   }
+
+  const hoverClass = hoverEffect
+    ? 'hover:shadow-[var(--shadow-card-hover)] hover:border-[var(--color-line-strong)] transition-all duration-200'
+    : 'transition-shadow duration-150'
 
   const paddingClass =
     padding === 'none'
@@ -41,14 +49,17 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`rounded-[var(--radius-card)] border ${borderClass} ${bgClass} shadow-[var(--shadow-card)] overflow-hidden ${className}`}
+      className={`rounded-[var(--radius-card)] border ${borderClass} ${bgClass} shadow-[var(--shadow-card)] ${hoverClass} overflow-hidden ${className}`}
       {...props}
     >
       {(title || action || subtitle) && (
         <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-2">
-          <div>
-            {title && <h2 className="text-[18px] font-semibold text-[var(--color-ink)] leading-snug">{title}</h2>}
-            {subtitle && <p className="text-[14px] text-[var(--color-muted)] mt-1">{subtitle}</p>}
+          <div className="flex items-start gap-3 min-w-0">
+            {icon && <div className="p-2 rounded-[var(--radius-control)] bg-[var(--color-inset)] text-[var(--color-accent)] shrink-0 mt-0.5">{icon}</div>}
+            <div>
+              {title && <h2 className="text-[18px] font-semibold text-[var(--color-ink)] leading-snug">{title}</h2>}
+              {subtitle && <p className="text-[14px] text-[var(--color-muted)] mt-0.5">{subtitle}</p>}
+            </div>
           </div>
           {action && <div className="shrink-0">{action}</div>}
         </div>

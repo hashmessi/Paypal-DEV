@@ -172,9 +172,34 @@ export const ShopPage: React.FC = () => {
                     rows={4}
                     value={instruction}
                     onChange={(e) => setInstruction(e.target.value)}
-                    className="w-full p-3 bg-white border border-[var(--color-line-strong)] rounded-[var(--radius-control)] text-[14px] text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2 leading-relaxed"
+                    className="w-full p-3 bg-white border border-[var(--color-line)] hover:border-[var(--color-line-strong)] rounded-xl text-[14px] text-[var(--color-ink)] focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2 leading-relaxed shadow-2xs"
                   />
                 </FormField>
+
+                <div className="flex items-center gap-2 flex-wrap pt-1">
+                  <span className="text-[12px] text-[var(--color-muted)] font-medium">Sample queries:</span>
+                  <button
+                    type="button"
+                    onClick={() => setInstruction('Find new black over-ear wireless noise cancelling headphones under $100 delivered within 5 days')}
+                    className="text-[12px] px-2.5 py-1 rounded-full bg-[var(--color-inset)] hover:bg-[var(--color-accent-soft)] hover:text-[var(--color-accent)] border border-[var(--color-line)] transition-colors cursor-pointer"
+                  >
+                    Wireless headphones &lt;$100
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInstruction('Find new ergonomic desk chair under $180 delivered within 7 days')}
+                    className="text-[12px] px-2.5 py-1 rounded-full bg-[var(--color-inset)] hover:bg-[var(--color-accent-soft)] hover:text-[var(--color-accent)] border border-[var(--color-line)] transition-colors cursor-pointer"
+                  >
+                    Ergonomic chair &lt;$180
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInstruction('Mechanical tactile keyboard with RGB backlighting under $75 within 4 days')}
+                    className="text-[12px] px-2.5 py-1 rounded-full bg-[var(--color-inset)] hover:bg-[var(--color-accent-soft)] hover:text-[var(--color-accent)] border border-[var(--color-line)] transition-colors cursor-pointer"
+                  >
+                    Mechanical keyboard &lt;$75
+                  </button>
+                </div>
 
                 <div className="flex justify-end pt-2">
                   <Button
