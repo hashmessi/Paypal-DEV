@@ -43,9 +43,10 @@ services:
       - key: CORS_ORIGINS
         value: "*"
 
-  # Frontend Web Client
-  - type: static
+  # Frontend Web Client (Static Site on Render Blueprint uses type: web with runtime: static)
+  - type: web
     name: promiseloop-web
+    runtime: static
     rootDir: frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
@@ -60,4 +61,3 @@ services:
           name: promiseloop-api
           type: web
           property: host
-
