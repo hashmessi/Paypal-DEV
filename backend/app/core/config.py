@@ -1,7 +1,8 @@
 """Configuration settings loaded from environment variables."""
 
-from typing import List
-from pydantic import Field
+import json
+from typing import List, Union
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -40,9 +41,21 @@ class Settings(BaseSettings):
     ADMIN_TOKEN: str = Field(default="", description="Token for seed/admin endpoints; empty disables them")
     LLM_RATE_LIMIT_PER_MIN: int = Field(default=10, description="Per-IP requests/min on LLM-backed endpoints")
     SECRET_KEY: str = Field(default="promiseloop-dev-secret-key-change-in-prod")
-    CORS_ORIGINS: List[str] = Field(default=["*"])
+    CORS_ORIGINS: Union[str, List[str]] = Field(default=["*"])
     PORT: int = Field(default=8000)
+
+    @field_validator("CORS_ORIGINS", mode="after")
+    @classmethod
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+        if isinstance(v, str):
+            s = v.strip()
+            if s.startswith("[") and s.endswith("]"):
+                try:
+                    return json.loads(s)
+                except Exception:
+                    pass
+            return [x.strip() for x in s.split(",") if x.strip()]
+        return v
 
 
 settings = Settings()
-

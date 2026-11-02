@@ -41,7 +41,7 @@ services:
       - key: PAYPAL_WEBHOOK_ID
         sync: false
       - key: CORS_ORIGINS
-        value: "*"
+        value: '["*"]'
 
   # Frontend Web Client (Static Site on Render Blueprint uses type: web with runtime: static)
   - type: web
