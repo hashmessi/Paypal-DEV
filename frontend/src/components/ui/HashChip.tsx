@@ -6,6 +6,8 @@ export interface HashChipProps {
   value: string
   kind?: 'sha' | 'paypal' | 'evt' | 'id'
   copyable?: boolean
+  /** Detail views show the whole identifier; tables leave this off to truncate. */
+  full?: boolean
   className?: string
 }
 
@@ -13,13 +15,14 @@ export const HashChip: React.FC<HashChipProps> = ({
   value,
   kind = 'sha',
   copyable = true,
+  full = false,
   className = '',
 }) => {
   const [copied, setCopied] = useState(false)
 
   if (!value) return null
 
-  const displayText = kind === 'sha' ? truncateHash(value) : truncateId(value)
+  const displayText = full ? value : kind === 'sha' ? truncateHash(value) : truncateId(value)
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation()

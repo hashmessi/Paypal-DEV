@@ -14,16 +14,16 @@ export const Topbar: React.FC<TopbarProps> = ({ onToggleMobile }) => {
   const isClockSimulated = offsetMs > 0
 
   const getPageTitle = (pathname: string): string => {
-    if (pathname === '/') return 'Judge Start'
+    if (pathname === '/') return 'Judge start'
     if (pathname.startsWith('/shop')) return 'Shopper agent'
-    if (pathname.startsWith('/receipts/') && pathname.endsWith('/replay')) return 'Promise Replay'
-    if (pathname.startsWith('/receipts/')) return 'Promise Receipt'
+    if (pathname.startsWith('/receipts/') && pathname.endsWith('/replay')) return 'Promise replay'
+    if (pathname.startsWith('/receipts/')) return 'Promise receipt'
     if (pathname === '/receipts') return 'Promise receipts'
     if (pathname.startsWith('/tower/cases/')) return 'Drift review'
     if (pathname.startsWith('/tower')) return 'Control tower'
     if (pathname === '/proof') return 'Proof'
     if (pathname === '/events') return 'Event history'
-    if (pathname === '/spine') return 'Spine Console'
+    if (pathname === '/spine') return 'Spine console'
     return 'Control tower'
   }
 
@@ -56,16 +56,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onToggleMobile }) => {
           </Badge>
         )}
 
-        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-[0.04em] bg-[var(--color-neutral-soft)] text-[var(--color-neutral)] border border-[var(--color-neutral-line)]">
-          SANDBOX ENVIRONMENT
-        </span>
-
-        <div
-          className="w-8 h-8 rounded-full bg-[var(--color-ink)] text-white text-[12px] font-semibold flex items-center justify-center shrink-0"
-          title="Demo Merchant A (Sandbox)"
-        >
-          DM
-        </div>
+        <Badge tone="neutral">Sandbox environment</Badge>
       </div>
     </header>
   )

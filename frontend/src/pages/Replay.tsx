@@ -77,7 +77,7 @@ export const ReplayPage: React.FC = () => {
 
       <PageHeader
         eyebrow="AUDIT TIMELINE"
-        title="Promise Replay"
+        title="Promise replay"
         description="Immutable 10-step execution audit trace. Verifies cryptographic hash continuity from natural language instruction to settlement capture."
         actions={
           <div className="flex items-center gap-2.5">
@@ -122,8 +122,8 @@ export const ReplayPage: React.FC = () => {
 
         {/* Right: Integrity card (4 cols, 320px) */}
         <div className="lg:col-span-4 space-y-6 sticky top-24">
-          <Card title="Cryptographic Integrity" subtitle="Continuous SHA-256 chain validation">
-            <div className="space-y-4 text-[13px]">
+          <Card title="Cryptographic integrity" subtitle="Continuous SHA-256 chain validation">
+            <div className="space-y-4 text-[14px]">
               <div className="p-3 rounded bg-[var(--color-ok-soft)] border border-[var(--color-ok-line)] flex items-center justify-between text-[var(--color-ok)] font-semibold">
                 <span>Chain state</span>
                 <span>✓ Intact · {replay.event_count} events</span>

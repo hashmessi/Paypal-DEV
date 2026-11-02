@@ -13,7 +13,7 @@ export const TrustBadge: React.FC<TrustBadgeProps> = ({ trust, className }) => {
   return (
     <Badge tone={tone} className={className}>
       <span>{label}</span>
-      {note && <span className="opacity-75 text-[11px] font-normal ml-0.5">({note})</span>}
+      {note && <span className="opacity-75 text-[12px] font-normal ml-0.5">({note})</span>}
     </Badge>
   )
 }
@@ -24,12 +24,8 @@ export interface SyntheticBadgeProps {
 
 export const SyntheticBadge: React.FC<SyntheticBadgeProps> = ({ className }) => {
   return (
-    <Badge
-      tone="warn"
-      uppercase
-      className={`font-mono text-[11px] font-normal border-dashed ${className || ''}`}
-    >
-      SYNTHETIC
+    <Badge tone="neutral" className={`bg-transparent border-dashed ${className || ''}`}>
+      Synthetic
     </Badge>
   )
 }

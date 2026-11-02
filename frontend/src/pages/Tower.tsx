@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { useTower } from '../queries/useTower'
 import { PageHeader } from '../components/ui/PageHeader'
 import { StatCard } from '../components/ui/StatCard'
@@ -49,10 +49,10 @@ export const TowerPage: React.FC = () => {
   // Configure AG Grid quartz theme parameters matching UI-SPEC
   const gridTheme = useMemo(() => {
     return themeQuartz.withParams({
-      backgroundColor: '#ffffff',
-      headerBackgroundColor: '#f8fafc',
-      borderColor: '#e5e7eb',
-      accentColor: '#2563eb',
+      backgroundColor: 'var(--color-surface)',
+      headerBackgroundColor: 'var(--color-inset)',
+      borderColor: 'var(--color-line)',
+      accentColor: 'var(--color-accent)',
       fontFamily: 'var(--font-sans)',
       fontSize: 14,
       headerFontSize: 12,
@@ -61,6 +61,15 @@ export const TowerPage: React.FC = () => {
       rowHeight: 56,
       headerHeight: 44,
     })
+  }, [])
+
+  // Secondary columns only earn their width on large screens; below that the grid fits the rest.
+  const [isWide, setIsWide] = useState(() => window.matchMedia('(min-width: 1536px)').matches)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1536px)')
+    const onChange = (e: MediaQueryListEvent) => setIsWide(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
   }, [])
 
   if (isLoading) {
@@ -94,6 +103,8 @@ export const TowerPage: React.FC = () => {
     : allPromises
 
   const recentPromises = allPromises.slice(0, 4)
+  // A percentage is only meaningful once at least one promise has a gate decision.
+  const hasDecisions = allPromises.some((p) => p.gate_decision && p.gate_decision.outcome !== 'none')
   const needsAttention = allPromises.filter(
     (p) => p.gate_decision?.outcome === 'DRIFT' || p.gate_decision?.outcome === 'HOLD'
   )
@@ -120,10 +131,11 @@ export const TowerPage: React.FC = () => {
       headerName: 'Promise',
       field: 'ref',
       width: 130,
+      minWidth: 120,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
-          <span className="font-mono font-semibold text-[var(--color-accent)] hover:underline cursor-pointer">
+          <span className="font-mono font-semibold text-[var(--color-accent)] hover:underline cursor-pointer whitespace-nowrap">
             {params.data.ref}
           </span>
         )
@@ -131,12 +143,13 @@ export const TowerPage: React.FC = () => {
     },
     {
       headerName: 'Product',
-      width: 260,
+      flex: 2,
+      minWidth: 200,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         const p = params.data
         return (
-          <div className="truncate py-1 leading-snug">
+          <div className="min-w-0 py-1 leading-snug">
             <p className="font-semibold text-[var(--color-ink)] truncate">{p.product_snapshot.title}</p>
             <p className="text-[12px] text-[var(--color-muted)] truncate">
               {p.constraints.variant_color} · {p.constraints.condition}
@@ -148,7 +161,7 @@ export const TowerPage: React.FC = () => {
     {
       headerName: 'Amount',
       field: 'payment.amount_cents',
-      width: 120,
+      width: 110,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
@@ -160,7 +173,8 @@ export const TowerPage: React.FC = () => {
     },
     {
       headerName: 'Authorization',
-      width: 180,
+      flex: 1,
+      minWidth: 180,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return <AuthorizationPill state={params.data.payment.state} />
@@ -168,7 +182,8 @@ export const TowerPage: React.FC = () => {
     },
     {
       headerName: 'Gate',
-      width: 200,
+      flex: 1,
+      minWidth: 200,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
@@ -190,12 +205,13 @@ export const TowerPage: React.FC = () => {
         let tone = 'text-[var(--color-muted)]'
         if (cd.isExpired) tone = 'text-[var(--color-bad)] font-semibold'
         else if (cd.isExpiringSoon) tone = 'text-[var(--color-warn)] font-semibold'
-        return <span className={`font-mono text-[13px] ${tone}`}>{cd.text}</span>
+        return <span className={`font-mono text-[12px] ${tone}`}>{cd.text}</span>
       },
     },
     {
       headerName: 'Evidence',
       width: 140,
+      hide: !isWide,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         const count = params.data.evidence_events.length
@@ -210,6 +226,7 @@ export const TowerPage: React.FC = () => {
     {
       headerName: 'Updated',
       width: 120,
+      hide: !isWide,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
@@ -221,8 +238,9 @@ export const TowerPage: React.FC = () => {
     },
     {
       headerName: 'Actions',
-      width: 220,
+      width: 190,
       sortable: false,
+      pinned: 'right',
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         const p = params.data
@@ -234,7 +252,7 @@ export const TowerPage: React.FC = () => {
               variant="secondary"
               loading={reconcilingId === p.id}
               onClick={(e) => handleReconcile(e, p.id)}
-              className="text-[11px] h-7 px-2"
+              className="text-[12px] h-8 px-2.5"
             >
               Reconcile
             </Button>
@@ -246,7 +264,7 @@ export const TowerPage: React.FC = () => {
                 e.stopPropagation()
                 setVoidPromiseId(p.id)
               }}
-              className="text-[11px] h-7 px-2"
+              className="text-[12px] h-8 px-2.5"
             >
               Void…
             </Button>
@@ -299,9 +317,9 @@ export const TowerPage: React.FC = () => {
         />
         <StatCard
           label="Verified outcomes"
-          value={`${kpis.verified_outcomes_pct}%`}
+          value={hasDecisions ? `${kpis.verified_outcomes_pct}%` : '—'}
           caption="Captured upon proof"
-          tone="ok"
+          tone={hasDecisions ? 'ok' : 'default'}
         />
         <StatCard
           label="Review required"
@@ -313,7 +331,7 @@ export const TowerPage: React.FC = () => {
           label="Authorized · not captured"
           value={formatMinor(kpis.authorized_not_captured_cents)}
           caption={`${kpis.authorized_not_captured_count} open holds`}
-          tone="warn"
+          tone={kpis.authorized_not_captured_count > 0 ? 'warn' : 'default'}
         />
       </div>
 
@@ -327,25 +345,25 @@ export const TowerPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/receipts')}
-              className="text-[13px] text-[var(--color-accent)] font-semibold hover:underline flex items-center gap-1"
+              className="text-[14px] text-[var(--color-accent)] font-semibold hover:underline flex items-center gap-1"
             >
               View all <ArrowRight className="w-3.5 h-3.5" />
             </button>
           }
         >
-          <div className="divide-y divide-[var(--color-line)] text-[13px]">
+          <div className="divide-y divide-[var(--color-line)] text-[14px]">
             {recentPromises.length === 0 ? (
               <p className="text-[var(--color-muted)] py-4 text-center">No promises recorded yet.</p>
             ) : (
               recentPromises.map((p) => (
-                <div
+                <Link
                   key={p.id}
-                  onClick={() => navigate(`/receipts/${p.id}`)}
-                  className="py-3 flex items-center justify-between cursor-pointer hover:bg-[var(--color-inset)] px-2 rounded transition-colors"
+                  to={`/receipts/${p.id}`}
+                  className="py-3 flex items-center justify-between hover:bg-[var(--color-inset)] px-2 rounded transition-colors"
                 >
                   <div className="min-w-0 flex-1 mr-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-semibold text-[var(--color-accent)] text-[12px]">
+                      <span className="font-mono font-semibold text-[var(--color-accent)] text-[12px] whitespace-nowrap shrink-0">
                         {p.ref}
                       </span>
                       <span className="font-semibold text-[var(--color-ink)] truncate">
@@ -356,8 +374,8 @@ export const TowerPage: React.FC = () => {
                       {relativeTime(p.created_at)} · {formatMinor(p.payment.amount_cents)} USD
                     </p>
                   </div>
-                  <AuthorizationPill state={p.payment.state} />
-                </div>
+                  <AuthorizationPill state={p.payment.state} className="shrink-0" />
+                </Link>
               ))
             )}
           </div>
@@ -371,13 +389,13 @@ export const TowerPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/tower?filter=drift')}
-              className="text-[13px] text-[var(--color-bad)] font-semibold hover:underline flex items-center gap-1"
+              className={`text-[14px] font-semibold hover:underline flex items-center gap-1 ${needsAttention.length > 0 ? 'text-[var(--color-bad)]' : 'text-[var(--color-accent)]'}`}
             >
               Open drift queue ({needsAttention.length}) <ArrowRight className="w-3.5 h-3.5" />
             </button>
           }
         >
-          <div className="divide-y divide-[var(--color-line)] text-[13px]">
+          <div className="divide-y divide-[var(--color-line)] text-[14px]">
             {needsAttention.length === 0 ? (
               <div className="py-6 text-center text-[var(--color-muted)]">
                 <CheckCircle2 className="w-5 h-5 mx-auto mb-1 text-[var(--color-ok)]" />
@@ -387,10 +405,10 @@ export const TowerPage: React.FC = () => {
               needsAttention.map((p) => {
                 const finding = p.gate_decision?.findings[0]
                 return (
-                  <div
+                  <Link
                     key={p.id}
-                    onClick={() => navigate(`/tower/cases/${p.id}`)}
-                    className="py-3 flex items-center justify-between cursor-pointer hover:bg-[var(--color-bad-soft)]/20 px-2 rounded transition-colors"
+                    to={`/tower/cases/${p.id}`}
+                    className="py-3 flex items-center justify-between hover:bg-[var(--color-bad-soft)]/20 px-2 rounded transition-colors"
                   >
                     <div className="min-w-0 flex-1 mr-3 flex items-start gap-2.5">
                       <div className="p-1.5 rounded bg-[var(--color-bad-soft)] text-[var(--color-bad)] shrink-0 mt-0.5">
@@ -405,10 +423,8 @@ export const TowerPage: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                    <Button size="sm" variant="danger" className="shrink-0 text-[11px] h-7 px-2.5">
-                      Resolve
-                    </Button>
-                  </div>
+                    <span className="shrink-0 text-[12px] font-semibold text-[var(--color-bad)]">Resolve</span>
+                  </Link>
                 )
               })
             )}
@@ -419,7 +435,7 @@ export const TowerPage: React.FC = () => {
       {/* Full-width AG Grid Community Control Tower Table */}
       <Card
         padding="none"
-        title="Commerce Invariant Control Grid"
+        title="Commerce invariant control grid"
         subtitle={
           isDriftFilter
             ? 'Filtered by: Open drift & review holds'
@@ -433,14 +449,16 @@ export const TowerPage: React.FC = () => {
           ) : undefined
         }
       >
-        <div style={{ height: '460px', width: '100%' }}>
+        <div style={{ minHeight: 220, width: '100%' }}>
           <AgGridReact
             theme={gridTheme}
+            domLayout="autoHeight"
             rowData={displayedPromises}
             columnDefs={columnDefs}
             defaultColDef={{
               resizable: true,
               sortable: true,
+              cellClass: 'flex items-center',
             }}
             pagination={false}
             rowSelection="single"

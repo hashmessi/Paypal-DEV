@@ -28,7 +28,7 @@ export function DataTable<T>({
 
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full text-left border-collapse">
+      <table className="w-full min-w-[880px] text-left border-collapse">
         <thead>
           <tr className="bg-[var(--color-inset)] border-b border-[var(--color-line)]">
             {columns.map((col, idx) => (
@@ -49,6 +49,17 @@ export function DataTable<T>({
             <tr
               key={keyExtractor(row)}
               onClick={() => onRowClick?.(row)}
+              tabIndex={onRowClick ? 0 : undefined}
+              onKeyDown={
+                onRowClick
+                  ? (e) => {
+                      if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault()
+                        onRowClick(row)
+                      }
+                    }
+                  : undefined
+              }
               className={`h-14 transition-colors ${
                 onRowClick ? 'cursor-pointer hover:bg-[var(--color-inset)]' : ''
               }`}

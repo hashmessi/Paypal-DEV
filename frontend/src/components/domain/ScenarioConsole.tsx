@@ -58,7 +58,7 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[var(--color-warn-line)]/50 pb-3">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="text-[14px] font-semibold uppercase tracking-[0.04em] text-[var(--color-warn)]">
-            Scenario Console
+            Scenario console
           </h3>
           <SyntheticBadge />
         </div>

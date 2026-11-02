@@ -52,8 +52,11 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T | nul
     return null
   }
 
+  // The timer only flags a cold start while the request is still pending; it must be
+  // cleared on every exit path or a fast response would still raise the banner 3s later.
+  let timer: ReturnType<typeof setTimeout> | undefined
   const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => {
+    timer = setTimeout(() => {
       notifyServerStatus({ isWakingUp: true, lastAttemptAt: Date.now() })
       reject(new Error('COLD_START_TIMEOUT'))
     }, 3000)
@@ -61,6 +64,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T | nul
 
   try {
     const res = (await Promise.race([fetch(`${API_BASE}${path}`, options), timeoutPromise])) as Response
+    clearTimeout(timer)
     if (serverStatus.isWakingUp) {
       notifyServerStatus({ isWakingUp: false })
     }
@@ -72,6 +76,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T | nul
     }
     return (await res.json()) as T
   } catch (err) {
+    clearTimeout(timer)
     console.warn(`Backend API ${path} unreachable, utilizing local demo engine:`, err)
     return null
   }

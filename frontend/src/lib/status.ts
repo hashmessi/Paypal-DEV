@@ -98,22 +98,22 @@ export function getReceiptPill(status: ReceiptStatus): StatusPillInfo {
  */
 export function getPromiseStateHeaderPill(paymentState: PaymentState, gateOutcome?: GateOutcome): StatusPillInfo {
   if (paymentState === 'captured') {
-    return { label: 'CAPTURED', tone: 'ok', isUppercase: true }
+    return { label: 'Captured', tone: 'ok' }
   }
 
   if (gateOutcome === 'DRIFT' || gateOutcome === 'PROHIBITED') {
-    return { label: 'CAPTURE BLOCKED', tone: 'bad', isUppercase: true, icon: 'octagon-alert' }
+    return { label: 'Capture blocked', tone: 'bad', icon: 'octagon-alert' }
   }
 
   if (paymentState === 'voided') {
-    return { label: 'VOIDED', tone: 'neutral', isUppercase: true }
+    return { label: 'Voided', tone: 'neutral' }
   }
 
   if (paymentState === 'expired') {
-    return { label: 'EXPIRED', tone: 'bad', isUppercase: true }
+    return { label: 'Expired', tone: 'bad' }
   }
 
-  return { label: 'AUTHORIZED · NOT CAPTURED', tone: 'warn', isUppercase: true }
+  return { label: 'Authorized · not captured', tone: 'warn' }
 }
 
 export function getTrustBadge(trust: TrustLevel): { label: string; tone: PillTone; note?: string } {
