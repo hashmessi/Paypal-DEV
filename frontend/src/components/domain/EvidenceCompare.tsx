@@ -1,5 +1,6 @@
 import React from 'react'
 import { CheckCircle2, XCircle } from 'lucide-react'
+import { Badge } from '../ui/Badge'
 
 export interface EvidenceCompareProps {
   expected: string
@@ -27,9 +28,9 @@ export const EvidenceCompare: React.FC<EvidenceCompareProps> = ({
             <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
             <span>{expectedLabel}</span>
           </p>
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-white font-semibold text-[var(--color-ok)] border border-[var(--color-ok-line)]">
+          <Badge tone="ok" className="bg-white">
             Invariant Truth
-          </span>
+          </Badge>
         </div>
         <p className="text-[18px] font-bold text-[var(--color-ink)] leading-snug">{expected}</p>
         <div className="pt-2 border-t border-[var(--color-ok-line)]/50 text-[11px] text-[var(--color-muted)] font-mono truncate">
@@ -44,9 +45,9 @@ export const EvidenceCompare: React.FC<EvidenceCompareProps> = ({
             <XCircle className="w-3.5 h-3.5 shrink-0" />
             <span>{observedLabel}</span>
           </p>
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-white font-bold text-[var(--color-bad)] border border-[var(--color-bad-line)]">
+          <Badge tone="bad" className="bg-white font-bold">
             DRIFT DETECTED
-          </span>
+          </Badge>
         </div>
         <p className="text-[18px] font-bold text-[var(--color-bad)] leading-snug">{observed}</p>
         <div className="pt-2 border-t border-[var(--color-bad-line)]/50 text-[11px] text-[var(--color-muted)] font-mono truncate">

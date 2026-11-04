@@ -133,28 +133,30 @@ export const TowerPage: React.FC = () => {
     {
       headerName: 'Promise',
       field: 'ref',
-      width: 130,
-      minWidth: 120,
+      width: 115,
+      minWidth: 105,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
-          <span className="font-mono font-semibold text-[var(--color-accent)] hover:underline cursor-pointer whitespace-nowrap">
-            {params.data.ref}
-          </span>
+          <div className="flex items-center h-full">
+            <span className="font-mono font-semibold text-[var(--color-accent)] hover:underline cursor-pointer whitespace-nowrap text-[13px]">
+              {params.data.ref}
+            </span>
+          </div>
         )
       },
     },
     {
       headerName: 'Product',
       flex: 2,
-      minWidth: 200,
+      minWidth: 170,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         const p = params.data
         return (
-          <div className="min-w-0 py-1 leading-snug">
-            <p className="font-semibold text-[var(--color-ink)] truncate">{p.product_snapshot.title}</p>
-            <p className="text-[12px] text-[var(--color-muted)] truncate">
+          <div className="min-w-0 py-1 leading-snug flex flex-col justify-center h-full">
+            <p className="font-semibold text-[var(--color-ink)] truncate text-[13px]">{p.product_snapshot.title}</p>
+            <p className="text-[11px] text-[var(--color-muted)] truncate mt-0.5">
               {p.constraints.variant_color} · {p.constraints.condition}
             </p>
           </div>
@@ -164,42 +166,50 @@ export const TowerPage: React.FC = () => {
     {
       headerName: 'Amount',
       field: 'payment.amount_cents',
-      width: 110,
+      width: 95,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
-          <span className="tabular-nums font-semibold text-[var(--color-ink)]">
-            {formatMinor(params.data.payment.amount_cents)}
-          </span>
+          <div className="flex items-center h-full">
+            <span className="tabular-nums font-semibold text-[var(--color-ink)] text-[13px]">
+              {formatMinor(params.data.payment.amount_cents)}
+            </span>
+          </div>
         )
       },
     },
     {
       headerName: 'Authorization',
       flex: 1,
-      minWidth: 180,
+      minWidth: 135,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
-        return <AuthorizationPill state={params.data.payment.state} />
+        return (
+          <div className="flex items-center h-full">
+            <AuthorizationPill state={params.data.payment.state} />
+          </div>
+        )
       },
     },
     {
       headerName: 'Gate',
       flex: 1,
-      minWidth: 200,
+      minWidth: 140,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
-          <GatePill
-            outcome={params.data.gate_decision?.outcome}
-            findings={params.data.gate_decision?.findings}
-          />
+          <div className="flex items-center h-full">
+            <GatePill
+              outcome={params.data.gate_decision?.outcome}
+              findings={params.data.gate_decision?.findings}
+            />
+          </div>
         )
       },
     },
     {
       headerName: 'Auth expiry',
-      width: 130,
+      width: 110,
       sort: 'asc',
       comparator: (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime(),
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
@@ -208,19 +218,23 @@ export const TowerPage: React.FC = () => {
         let tone = 'text-[var(--color-muted)]'
         if (cd.isExpired) tone = 'text-[var(--color-bad)] font-semibold'
         else if (cd.isExpiringSoon) tone = 'text-[var(--color-warn)] font-semibold'
-        return <span className={`font-mono text-[12px] ${tone}`}>{cd.text}</span>
+        return (
+          <div className="flex items-center h-full">
+            <span className={`font-mono text-[12px] ${tone}`}>{cd.text}</span>
+          </div>
+        )
       },
     },
     {
       headerName: 'Evidence',
-      width: 140,
+      width: 120,
       hide: !isWide,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         const count = params.data.evidence_events.length
         return (
-          <div className="flex items-center gap-1.5">
-            <span className="font-mono text-[12px]">{count}</span>
+          <div className="flex items-center gap-1.5 h-full">
+            <span className="font-mono text-[12px] font-semibold text-[var(--color-ink)]">{count}</span>
             <SyntheticBadge />
           </div>
         )
@@ -228,46 +242,52 @@ export const TowerPage: React.FC = () => {
     },
     {
       headerName: 'Updated',
-      width: 120,
+      width: 95,
       hide: !isWide,
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         return (
-          <span className="text-[12px] text-[var(--color-muted)]">
-            {relativeTime(params.data.updated_at)}
-          </span>
+          <div className="flex items-center h-full">
+            <span className="text-[12px] text-[var(--color-muted)]">
+              {relativeTime(params.data.updated_at)}
+            </span>
+          </div>
         )
       },
     },
     {
       headerName: 'Actions',
-      width: 190,
+      width: 165,
       sortable: false,
       pinned: 'right',
       cellRenderer: (params: ICellRendererParams<PurchasePromise>) => {
         if (!params.data) return null
         const p = params.data
         const isVoided = p.payment.state === 'voided'
+        const isCaptured = p.payment.state === 'captured'
+        const isExpired = p.payment.state === 'expired'
+        const canVoid = !isVoided && !isCaptured && !isExpired
         return (
-          <div className="flex items-center gap-1.5 py-1" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-1.5 h-full" onClick={(e) => e.stopPropagation()}>
             <Button
               size="sm"
               variant="secondary"
               loading={reconcilingId === p.id}
               onClick={(e) => handleReconcile(e, p.id)}
-              className="text-[12px] h-8 px-2.5"
+              className="text-[11px] h-7 px-2 font-medium"
             >
               Reconcile
             </Button>
             <Button
               size="sm"
               variant="danger"
-              disabled={isVoided}
+              disabled={!canVoid}
               onClick={(e) => {
                 e.stopPropagation()
                 setVoidPromiseId(p.id)
               }}
-              className="text-[12px] h-8 px-2.5"
+              className="text-[11px] h-7 px-2 font-medium"
+              title={!canVoid ? (isCaptured ? 'Captured funds cannot be voided' : 'Inactive authorization') : 'Void authorization hold'}
             >
               Void…
             </Button>

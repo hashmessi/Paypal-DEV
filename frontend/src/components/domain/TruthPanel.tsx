@@ -98,7 +98,9 @@ export const TruthPanel: React.FC<TruthPanelProps> = ({
 
           <div className="flex items-center justify-between">
             <span className="text-[var(--color-muted)]">Payment state</span>
-            <AuthorizationPill state={promise.payment.state} />
+            <span className="font-medium text-[var(--color-ink)] text-[13px] capitalize">
+              {promise.payment.state.replace('_', ' ')}
+            </span>
           </div>
 
           <div className="flex items-center justify-between">

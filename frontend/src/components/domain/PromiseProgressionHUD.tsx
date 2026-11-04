@@ -324,7 +324,7 @@ export const PromiseProgressionHUD: React.FC<PromiseProgressionHUDProps> = ({
                       {st.step}
                     </span>
                     <span
-                      className={`text-[9.5px] font-mono font-semibold px-1.5 py-0.5 rounded-full uppercase border shrink-0 tracking-tight ${toneStyles.badge}`}
+                      className={`text-[10px] font-mono font-semibold px-2 py-0.5 h-4.5 shrink-0 inline-flex items-center rounded-full uppercase border tracking-tight ${toneStyles.badge}`}
                     >
                       {st.badge}
                     </span>

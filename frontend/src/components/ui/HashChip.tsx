@@ -33,7 +33,7 @@ export const HashChip: React.FC<HashChipProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] hover:border-[var(--color-line-strong)] hover:bg-white text-[12px] font-mono text-[var(--color-ink)] select-all whitespace-nowrap transition-colors shadow-2xs ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 h-6 shrink-0 rounded-[var(--radius-control)] bg-[var(--color-inset)] border border-[var(--color-line)] hover:border-[var(--color-line-strong)] hover:bg-white text-[12px] font-mono text-[var(--color-ink)] select-all whitespace-nowrap transition-colors shadow-2xs ${className}`}
       title={value}
     >
       <span className="truncate">{displayText}</span>
