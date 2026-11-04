@@ -1,5 +1,6 @@
 """Naive-vs-gated counterfactual: what an ungated agent+PayPal flow would have captured. Pure, integer cents."""
 
+import os
 from typing import Dict
 
 from app.core.config import settings
@@ -11,7 +12,8 @@ def gateway_is_simulated() -> bool:
     Evaluates to True ONLY when credentials are empty, 'test', or 'sandbox_test'.
     DEMO_MODE does NOT force FakeGateway when valid credentials exist.
     """
-    cid = (settings.PAYPAL_CLIENT_ID or "").strip()
+    env_cid = os.getenv("PAYPAL_CLIENT_ID")
+    cid = (env_cid if env_cid is not None else settings.PAYPAL_CLIENT_ID or "").strip()
     return not cid or cid in ("test", "sandbox_test")
 
 

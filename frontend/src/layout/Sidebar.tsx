@@ -38,9 +38,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
   ]
 
   const auditLinks = [
-    { to: '/events', label: 'Event History', icon: Activity },
-    { to: '/verify', label: 'Receipt Verifier', icon: ShieldCheck },
-    { to: '/spine', label: 'Spine Console', icon: Terminal },
+    { to: '/events', label: 'Event Ledger', icon: Activity },
+    { to: '/verify', label: 'Offline Verifier', icon: ShieldCheck },
+    { to: '/spine', label: 'Developer Harness', icon: Terminal },
   ]
 
   const renderNavGroup = (title: string, links: typeof coreFlowLinks) => (
@@ -140,7 +140,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ driftCount = 0, isMobileOpen, 
           <nav className="p-2 md:p-3 space-y-1">
             {renderNavGroup('Core Flow', coreFlowLinks)}
             <div className="h-[1px] bg-[var(--color-line)] my-1" />
-            {renderNavGroup('Audit & Diagnostics', auditLinks)}
+            {renderNavGroup('Audit & Standards', auditLinks)}
           </nav>
         </div>
 

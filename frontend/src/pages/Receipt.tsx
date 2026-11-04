@@ -20,6 +20,7 @@ import { TruthPanel } from '../components/domain/TruthPanel'
 import { PromiseProgressionHUD } from '../components/domain/PromiseProgressionHUD'
 import { ScenarioConsole } from '../components/domain/ScenarioConsole'
 import { FindingBanner } from '../components/domain/FindingBanner'
+import { Ap2MandateModal } from '../components/domain/Ap2MandateModal'
 import { formatMinor } from '../lib/money'
 import { formatTimeOnly, formatDateTime } from '../lib/time'
 import { api } from '../lib/api'
@@ -77,6 +78,8 @@ export const ReceiptPage: React.FC = () => {
 
   const [integrityStatus, setIntegrityStatus] = useState<string | null>(null)
   const [isVerifying, setIsVerifying] = useState(false)
+  const [ap2Mandate, setAp2Mandate] = useState<Record<string, unknown> | null>(null)
+  const [isAp2ModalOpen, setIsAp2ModalOpen] = useState(false)
 
   if (isLoading) {
     return (
@@ -145,15 +148,10 @@ export const ReceiptPage: React.FC = () => {
     if (!promise) return
     try {
       const mandate = await api.getAp2Mandate(promise.id)
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(mandate, null, 2))
-      const a = document.createElement('a')
-      a.setAttribute('href', dataStr)
-      a.setAttribute('download', `ap2_mandate_${promise.ref || promise.id}.json`)
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
+      setAp2Mandate(mandate)
+      setIsAp2ModalOpen(true)
     } catch (e) {
-      console.error('Failed to export AP2 mandate', e)
+      console.error('Failed to load AP2 mandate', e)
     }
   }
 
@@ -589,6 +587,13 @@ export const ReceiptPage: React.FC = () => {
         onTriggerScenario={(scenarioKey) => sendScenario({ scenarioKey })}
         paymentState={promise.payment.state}
         loading={isScenarioSending}
+      />
+
+      <Ap2MandateModal
+        isOpen={isAp2ModalOpen}
+        onClose={() => setIsAp2ModalOpen(false)}
+        mandate={ap2Mandate}
+        purchaseRef={promise.ref || promise.id}
       />
     </div>
   )

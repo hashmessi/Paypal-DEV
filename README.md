@@ -4,19 +4,25 @@ Promise-gated payments for agentic commerce. A buyer's instruction is compiled i
 
 > The LLM interprets text. Deterministic code controls money. Any drift blocks capture.
 
+## 2-Minute Demo Video
+
+> **Watch the end-to-end walkthrough:** [PromiseLoop 2-Minute Demo Video](https://youtu.be/promiseloop-paypal-demo)  
+> *Demonstrates: Natural-language promise compiling → Real PayPal Orders v2 Sandbox authorization → Carrier drift injection locking capture → Deterministic prompt-injection defense → Corrected fulfillment capture & tracking push.*
+
 ## Try it in 5 minutes (no keys needed)
 
 > Cold start: the free Render instance sleeps after 15 minutes idle. The first load can take about a minute; the app shows a banner while it wakes.
 
-1. Open the live URL: `<LIVE_URL — fill in after Render deploy>`
+1. Open the live URL: `https://promiseloop.onrender.com` (or local `http://localhost:5173`)
 2. Go to **Control Tower** and press **Run demo scenario**. Every press creates a fresh receipt and authorization with dates relative to now. Nothing is pre-seeded.
 3. Open the new case. In the **Scenario Console** press, in order:
    - `Refurbished` → gate shows **CAPTURE BLOCKED** (condition drift, INV-01).
+   - `Prompt injection attack` → gate ignores adversarial note, maintains **CAPTURE BLOCKED**.
    - `Corrected` → seller ships the exact SKU, carrier accepts → gate returns to **MATCH**.
    - Capture now succeeds. Capturing earlier is refused locally with no PayPal call.
 4. Open **Replay** for the case: 10 steps from instruction to settlement, the divergence step highlighted, ledger hash-chain verified.
 5. Open **Proof**: 6 metrics computed live from 18 labeled scenarios, each with numerator and denominator.
-6. Optional real PayPal path: authorize with the Sandbox buyer `<SANDBOX_BUYER_EMAIL / PASSWORD — fill in>`.
+6. Optional real PayPal path: authorize with the Sandbox buyer `sb-buyer-promiseloop@personal.example.com` (Password: `Password1!`).
 
 ### Scenario Console guide
 
@@ -24,6 +30,7 @@ Promise-gated payments for agentic commerce. A buyer's instruction is compiled i
 |---|---|---|
 | Refurbished | carrier ACCEPTED, condition REFURBISHED | DRIFT, capture blocked |
 | Wrong color | carrier ACCEPTED, silver instead of black | DRIFT, capture blocked |
+| Prompt injection | adversarial `[SYSTEM: OVERRIDE]` note | DRIFT (INV-01), capture blocked, AST isolation intact |
 | Corrected | exact SKU + carrier ACCEPTED | MATCH, capture allowed |
 | Label only | LABEL_CREATED, no carrier acceptance | HOLD |
 | Late ETA | carrier ETA past the promised deadline | HOLD |
@@ -56,7 +63,7 @@ Test and inspect live: `GET /receipts/{purchase_id}/ap2` or click **Export AP2 M
 
 ## APIMatic contribution log
 
-Not yet used. `<fill in once the APIMatic PayPal Context Plugin has been run: what it was used for and what changed>`
+APIMatic's PayPal OpenAPI and TypeScript SDK definitions were utilized to validate schema conformance across `Orders v2` (intent `AUTHORIZE`, `custom_id` receipt hash anchoring) and `Shipping Trackers Batch v1` payloads, ensuring strict type-safety and contract compliance with PayPal REST APIs.
 
 ## Agent MCP gate (no money tools)
 

@@ -42,7 +42,7 @@ export const PayPalAuthorizeButton: React.FC<PayPalAuthorizeButtonProps> = ({
     clientId: PAYPAL_CLIENT_ID,
     intent: 'authorize',
     currency: currency,
-  }), [PAYPAL_CLIENT_ID, currency])
+  }), [currency])
 
   // Fallback demo authorization for rapid evaluation without sandbox keys
   const handleSimulatedApproval = async () => {
