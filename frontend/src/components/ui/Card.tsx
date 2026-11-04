@@ -53,7 +53,7 @@ export const Card: React.FC<CardProps> = ({
       {...props}
     >
       {(title || action || subtitle) && (
-        <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-2">
+        <div className={`flex items-start justify-between gap-4 px-6 pt-5 ${padding === 'none' ? 'pb-4 border-b border-[var(--color-line)]' : 'pb-2'}`}>
           <div className="flex items-start gap-3 min-w-0">
             {icon && <div className="p-2 rounded-[var(--radius-control)] bg-[var(--color-inset)] text-[var(--color-accent)] shrink-0 mt-0.5">{icon}</div>}
             <div>

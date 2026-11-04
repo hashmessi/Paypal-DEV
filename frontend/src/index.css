@@ -112,6 +112,40 @@ body {
   background: var(--color-muted);
 }
 
+/* AG Grid Quartz custom polish & vertical alignment */
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+  --ag-header-cell-hover-background-color: var(--color-inset);
+  --ag-header-cell-moving-background-color: var(--color-inset);
+  --ag-row-hover-color: #f8fafc;
+  --ag-selected-row-background-color: #f0f5fa;
+  font-family: var(--font-sans) !important;
+}
+
+.ag-theme-quartz .ag-root-wrapper {
+  border: none !important;
+}
+
+.ag-theme-quartz .ag-header-cell {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
+.ag-theme-quartz .ag-cell {
+  display: flex !important;
+  align-items: center !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
+.ag-theme-quartz .ag-cell-wrapper,
+.ag-theme-quartz .ag-cell-value {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  line-height: normal !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0ms !important;

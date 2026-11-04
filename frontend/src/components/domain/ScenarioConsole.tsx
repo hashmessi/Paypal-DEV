@@ -87,8 +87,8 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* Drift Triggers */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {/* Row 1: Drift & Adversarial Invariants */}
         <Button
           size="sm"
           variant="secondary"
@@ -115,21 +115,20 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           <span className="truncate">Wrong color</span>
         </Button>
 
-        {/* Resolution / Match */}
         <Button
           size="sm"
           variant="secondary"
-          disabled={loading || paymentState === 'captured'}
-          loading={activeAction === 'corrected'}
-          onClick={() => handleAction('corrected', 'Exact SKU + Carrier scan (Gate MATCH)')}
-          icon={<CheckCircle2 className="w-3.5 h-3.5 text-[var(--color-ok)]" />}
-          className="text-left justify-start h-10 px-3 font-semibold border-[var(--color-ok-line)] text-[var(--color-ok)] hover:bg-[var(--color-ok-soft)]"
-          title={paymentState === 'captured' ? 'Disabled: already captured' : 'Inject verified match'}
+          disabled={loading || isTerminal}
+          loading={activeAction === 'prompt_injection'}
+          onClick={() => handleAction('prompt_injection', 'Adversarial Prompt Injection in Tracking Note (Neutralized)')}
+          icon={<ShieldAlert className="w-3.5 h-3.5 text-rose-600" />}
+          className="text-left justify-start h-10 px-3 border-rose-200 hover:border-rose-400 hover:bg-rose-50/60"
+          title={isTerminal ? 'Disabled: payment is in terminal state' : 'Inject adversarial prompt injection into carrier note'}
         >
-          <span className="truncate">Correct item + Carrier</span>
+          <span className="truncate font-medium text-rose-700">Prompt injection attack</span>
         </Button>
 
-        {/* Holds */}
+        {/* Row 2: In-Flight Holds & Quote Changes */}
         <Button
           size="sm"
           variant="secondary"
@@ -158,18 +157,6 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           size="sm"
           variant="secondary"
           disabled={loading || isTerminal}
-          loading={activeAction === 'duplicate_event'}
-          onClick={() => handleAction('duplicate_event', 'Replayed duplicate event (Idempotent deduplication)')}
-          icon={<CopyCheck className="w-3.5 h-3.5 text-[var(--color-neutral)]" />}
-          className="text-left justify-start h-10 px-3 hover:bg-[var(--color-inset)]"
-        >
-          <span className="truncate">Duplicate event</span>
-        </Button>
-
-        <Button
-          size="sm"
-          variant="secondary"
-          disabled={loading || isTerminal}
           loading={activeAction === 'price_change'}
           onClick={() => handleAction('price_change', 'Merchant quote price shifted (STALE terms)')}
           icon={<TrendingUp className="w-3.5 h-3.5 text-[var(--color-warn)]" />}
@@ -178,17 +165,30 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           <span className="truncate">Merchant changes price</span>
         </Button>
 
+        {/* Row 3: Resolution & Lifecycle Execution */}
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={loading || paymentState === 'captured'}
+          loading={activeAction === 'corrected'}
+          onClick={() => handleAction('corrected', 'Exact SKU + Carrier scan (Gate MATCH)')}
+          icon={<CheckCircle2 className="w-3.5 h-3.5 text-[var(--color-ok)]" />}
+          className="text-left justify-start h-10 px-3 font-semibold border-[var(--color-ok-line)] text-[var(--color-ok)] hover:bg-[var(--color-ok-soft)]"
+          title={paymentState === 'captured' ? 'Disabled: already captured' : 'Inject verified match'}
+        >
+          <span className="truncate">Correct item + Carrier</span>
+        </Button>
+
         <Button
           size="sm"
           variant="secondary"
           disabled={loading || isTerminal}
-          loading={activeAction === 'prompt_injection'}
-          onClick={() => handleAction('prompt_injection', 'Adversarial Prompt Injection in Tracking Note (Neutralized)')}
-          icon={<ShieldAlert className="w-3.5 h-3.5 text-rose-600" />}
-          className="text-left justify-start h-10 px-3 border-rose-200 hover:border-rose-400 hover:bg-rose-50/60"
-          title={isTerminal ? 'Disabled: payment is in terminal state' : 'Inject adversarial prompt injection into carrier note'}
+          loading={activeAction === 'duplicate_event'}
+          onClick={() => handleAction('duplicate_event', 'Replayed duplicate event (Idempotent deduplication)')}
+          icon={<CopyCheck className="w-3.5 h-3.5 text-[var(--color-neutral)]" />}
+          className="text-left justify-start h-10 px-3 hover:bg-[var(--color-inset)]"
         >
-          <span className="truncate font-medium text-rose-700">Prompt injection attack</span>
+          <span className="truncate">Duplicate event</span>
         </Button>
 
         <Button
