@@ -29,7 +29,16 @@ export function useReceipt(id?: string) {
     mutationFn: async ({
       scenarioKey,
     }: {
-      scenarioKey: 'refurbished' | 'wrong_color' | 'corrected' | 'label_only' | 'late_eta' | 'duplicate_event' | 'price_change' | 'advance_clock'
+      scenarioKey:
+        | 'refurbished'
+        | 'wrong_color'
+        | 'corrected'
+        | 'label_only'
+        | 'late_eta'
+        | 'duplicate_event'
+        | 'price_change'
+        | 'advance_clock'
+        | 'prompt_injection'
     }) => {
       if (!id) throw new Error('Missing receipt id')
       return api.sendScenario(id, scenarioKey)

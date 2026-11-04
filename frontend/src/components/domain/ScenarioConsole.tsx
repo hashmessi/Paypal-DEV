@@ -11,6 +11,7 @@ import {
   CopyCheck,
   TrendingUp,
   Terminal,
+  ShieldAlert,
 } from 'lucide-react'
 
 export interface ScenarioConsoleProps {
@@ -24,6 +25,7 @@ export interface ScenarioConsoleProps {
       | 'duplicate_event'
       | 'price_change'
       | 'advance_clock'
+      | 'prompt_injection'
   ) => Promise<unknown>
   paymentState?: string
   loading?: boolean
@@ -48,7 +50,8 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
       | 'late_eta'
       | 'duplicate_event'
       | 'price_change'
-      | 'advance_clock',
+      | 'advance_clock'
+      | 'prompt_injection',
     label: string
   ) => {
     setActiveAction(key)
@@ -173,6 +176,19 @@ export const ScenarioConsole: React.FC<ScenarioConsoleProps> = ({
           className="text-left justify-start h-10 px-3 hover:border-[var(--color-warn-line)] hover:bg-[var(--color-warn-soft)]/40"
         >
           <span className="truncate">Merchant changes price</span>
+        </Button>
+
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={loading || isTerminal}
+          loading={activeAction === 'prompt_injection'}
+          onClick={() => handleAction('prompt_injection', 'Adversarial Prompt Injection in Tracking Note (Neutralized)')}
+          icon={<ShieldAlert className="w-3.5 h-3.5 text-rose-600" />}
+          className="text-left justify-start h-10 px-3 border-rose-200 hover:border-rose-400 hover:bg-rose-50/60"
+          title={isTerminal ? 'Disabled: payment is in terminal state' : 'Inject adversarial prompt injection into carrier note'}
+        >
+          <span className="truncate font-medium text-rose-700">Prompt injection attack</span>
         </Button>
 
         <Button

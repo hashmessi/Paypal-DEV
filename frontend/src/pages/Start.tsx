@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { useTower } from '../queries/useTower'
-import { Copy, Check, Play, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { Copy, Check, Play, ShieldCheck, CheckCircle2, AlertTriangle } from 'lucide-react'
 
 export const StartPage: React.FC = () => {
   const navigate = useNavigate()
@@ -45,6 +45,20 @@ export const StartPage: React.FC = () => {
           When autonomous shopping agents buy for humans, merchants should only settle funds if physical fulfillment
           provably matches the frozen buyer agreement. Any product, price, or carrier drift locks the hold.
         </p>
+      </div>
+
+      {/* The $3.75 Dispute Problem Callout */}
+      <div className="p-4 rounded-xl bg-amber-50/90 border border-amber-200/90 flex items-start gap-3.5 shadow-2xs">
+        <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+        <div className="text-[13px] leading-relaxed text-amber-950 space-y-1">
+          <p>
+            <strong className="font-semibold text-amber-900">The $3.75 Dispute Multiplier:</strong> In digital commerce, chargebacks and disputes cost merchants{' '}
+            <strong className="font-semibold text-amber-900">$3.75 for every $1 disputed</strong> (LexisNexis 2024), with 43% of dispute volume driven by Item-Not-As-Described (SNAD).
+          </p>
+          <p className="text-amber-800">
+            <strong>PromiseLoop inverts settlement:</strong> Rather than auto-capturing funds at checkout, money is held under PayPal Orders v2 authorization. Capture is executed only when carrier telemetry mathematically satisfies the frozen Promise Receipt.
+          </p>
+        </div>
       </div>
 
       {/* Two-Lane Golden Path Layout */}
@@ -245,6 +259,46 @@ export const StartPage: React.FC = () => {
               </button>
             </div>
           </div>
+        </div>
+      </Card>
+
+      {/* Paradigm Shift Comparison */}
+      <Card
+        title="Why Inverted Settlement Wins"
+        subtitle="Standard Agent Checkout vs. PromiseLoop Invariant Settlement"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[13px] border-collapse">
+            <thead>
+              <tr className="border-b border-[var(--color-line)] text-[11px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                <th className="py-2.5 pr-4">Dimension</th>
+                <th className="py-2.5 px-4 text-rose-800">Traditional Agent Flow</th>
+                <th className="py-2.5 pl-4 text-emerald-800">PromiseLoop Settlement</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--color-line)]">
+              <tr>
+                <td className="py-3 pr-4 font-medium text-[var(--color-ink)]">Payment Release</td>
+                <td className="py-3 px-4 text-[var(--color-muted)]">Auto-captured immediately at cart completion</td>
+                <td className="py-3 pl-4 font-semibold text-emerald-700">Held in authorization escrow until delivery evidence</td>
+              </tr>
+              <tr>
+                <td className="py-3 pr-4 font-medium text-[var(--color-ink)]">Wrong SKU / Condition</td>
+                <td className="py-3 px-4 text-rose-700">Funds gone; buyer files chargeback ($3.75 loss per $1)</td>
+                <td className="py-3 pl-4 font-semibold text-emerald-700">Gate refuses capture; authorization voided ($0 loss)</td>
+              </tr>
+              <tr>
+                <td className="py-3 pr-4 font-medium text-[var(--color-ink)]">Fulfillment Check</td>
+                <td className="py-3 px-4 text-[var(--color-muted)]">Passive shipping tracker email</td>
+                <td className="py-3 pl-4 font-semibold text-emerald-700">Deterministic invariant drift gate (<span className="font-mono text-[11px]">INV-01..INV-06</span>)</td>
+              </tr>
+              <tr>
+                <td className="py-3 pr-4 font-medium text-[var(--color-ink)]">Open Standard</td>
+                <td className="py-3 px-4 text-[var(--color-muted)]">Proprietary vendor lock-in</td>
+                <td className="py-3 pl-4 font-semibold text-emerald-700">Google Agent Payments Protocol (<span className="font-mono text-[11px]">AP2 v0.2</span>)</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </Card>
 

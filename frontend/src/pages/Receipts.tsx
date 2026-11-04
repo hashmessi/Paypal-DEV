@@ -135,8 +135,15 @@ export const ReceiptsPage: React.FC = () => {
               title="No promises yet"
               body="Run the demo scenario to create a receipt, an authorization and the first evidence."
               action={
-                <Button variant="primary" onClick={() => runDemoScenario()}>
-                  Run demo scenario
+                <Button
+                  variant="primary"
+                  loading={isRunningDemo}
+                  onClick={async () => {
+                    const res = await runDemoScenario()
+                    navigate(`/receipts/${res.purchase_id}`)
+                  }}
+                >
+                  Run instant demo scenario
                 </Button>
               }
             />

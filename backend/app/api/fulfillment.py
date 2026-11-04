@@ -21,7 +21,7 @@ class TriggerScenarioRequest(BaseModel):
         ...,
         description=(
             "Scenario Console trigger key: 'refurbished' | 'wrong_color' | 'corrected' | "
-            "'label_only' | 'late_eta' | 'duplicate_event' | 'price_change' | 'advance_clock'"
+            "'label_only' | 'late_eta' | 'duplicate_event' | 'price_change' | 'advance_clock' | 'prompt_injection'"
         ),
     )
 

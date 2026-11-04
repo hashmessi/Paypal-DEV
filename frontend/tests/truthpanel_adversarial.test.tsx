@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { TruthPanel } from '../src/components/domain/TruthPanel'
-import type { PurchasePromise, PaymentState, GateOutcome } from '../src/types/api'
+import type { PurchasePromise } from '../src/types/api'
 
 // Minimal test harness with assertions
 let passedCount = 0
