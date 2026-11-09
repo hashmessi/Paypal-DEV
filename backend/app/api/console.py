@@ -184,7 +184,7 @@ def _proof_cached() -> Dict[str, Any]:
 
 
 @router.get("/proof")
-async def proof():
+def proof():  # sync on purpose: run_proof() calls asyncio.run(), illegal inside the event loop
     return _proof_cached()
 
 
