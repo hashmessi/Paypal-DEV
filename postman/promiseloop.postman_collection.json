@@ -1,0 +1,609 @@
+{
+  "info": {
+    "name": "PromiseLoop - promise-gated settlement",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Runs the full golden path: authorize, drift blocks capture, injection ignored, corrected fulfillment allows capture, repeat capture is idempotent, replay + ledger verified."
+  },
+  "item": [
+    {
+      "name": "1. Health",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Create approved receipt + PayPal authorization (fresh each run)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/demo/run",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "demo",
+            "run"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('purchase_id', pm.response.json().purchase_id);",
+              "pm.test('purchase_id returned', () => pm.expect(pm.collectionVariables.get('purchase_id')).to.be.a('string'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Read sealed Promise Receipt",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/receipts/{{purchase_id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "receipts",
+            "{{purchase_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "[\"pm.test('status 200', () => pm.response.to.have.status(200));\", \"pm.test('receipt hash present', () => pm.expect(JSON.stringify(pm.response.json())).to.match(/[0-9a-f]{64}/));\"]"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Export AP2 v0.2 mandate",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/receipts/{{purchase_id}}/ap2",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "receipts",
+            "{{purchase_id}}",
+            "ap2"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. NEGATIVE: capture before evidence is refused",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/capture",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "capture"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 409', () => pm.response.to.have.status(409));",
+              "pm.test('blocked by gate', () => pm.expect(JSON.stringify(pm.response.json())).to.include('CAPTURE_BLOCKED_BY_GATE'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Inject drift: refurbished unit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/fulfillment/scenarios/{{purchase_id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fulfillment",
+            "scenarios",
+            "{{purchase_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\": \"refurbished\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Gate must be DRIFT",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/gate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "gate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const g = pm.response.json();",
+              "pm.test('gate DRIFT', () => pm.expect(g.outcome).to.eql('DRIFT'));",
+              "pm.test('can_capture=False', () => pm.expect(g.can_capture).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Inject prompt-injection note",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/fulfillment/scenarios/{{purchase_id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fulfillment",
+            "scenarios",
+            "{{purchase_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\": \"prompt_injection\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Gate still DRIFT (injection ignored)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/gate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "gate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const g = pm.response.json();",
+              "pm.test('gate DRIFT', () => pm.expect(g.outcome).to.eql('DRIFT'));",
+              "pm.test('can_capture=False', () => pm.expect(g.can_capture).to.eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Inject corrected fulfillment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/fulfillment/scenarios/{{purchase_id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fulfillment",
+            "scenarios",
+            "{{purchase_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\": \"corrected\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Gate must be MATCH",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/gate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "gate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const g = pm.response.json();",
+              "pm.test('gate MATCH', () => pm.expect(g.outcome).to.eql('MATCH'));",
+              "pm.test('can_capture=True', () => pm.expect(g.can_capture).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Capture funds (gate allows)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/capture",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "capture"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('capture_id', pm.response.json().capture_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. IDEMPOTENCY: repeat capture returns the same capture, no second charge",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/capture",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "capture"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('same capture_id', () => pm.expect(pm.response.json().capture_id).to.eql(pm.collectionVariables.get('capture_id')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Promise Replay timeline",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/replay-timeline",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "replay-timeline"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15. Verify ledger hash chain",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/purchases/{{purchase_id}}/verify",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "purchases",
+            "{{purchase_id}}",
+            "verify"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16. Proof metrics (18 labeled scenarios)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/proof",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "proof"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "purchase_id",
+      "value": ""
+    },
+    {
+      "key": "capture_id",
+      "value": ""
+    }
+  ]
+}
