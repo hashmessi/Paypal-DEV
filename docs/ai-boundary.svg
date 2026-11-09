@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13">
+  <rect width="900" height="330" rx="12" fill="#0f172a"/>
+  <text x="24" y="34" fill="#f8fafc" font-size="17" font-weight="700">AI trust boundary — the LLM interprets, code decides</text>
+  <defs><marker id="c" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#94a3b8"/></marker></defs>
+
+  <rect x="24" y="56" width="400" height="250" rx="10" fill="#1e1b4b" stroke="#818cf8" stroke-dasharray="6 4"/>
+  <text x="224" y="80" fill="#a5b4fc" font-weight="700" text-anchor="middle">UNTRUSTED ZONE — no credentials, no tools</text>
+  <rect x="44" y="96" width="170" height="52" rx="8" fill="#312e81" stroke="#818cf8"/>
+  <text x="129" y="118" fill="#e0e7ff" text-anchor="middle" font-weight="700">Intent extractor</text>
+  <text x="129" y="136" fill="#c7d2fe" text-anchor="middle" font-size="12">cache → Gemini → OpenRouter</text>
+  <rect x="234" y="96" width="170" height="52" rx="8" fill="#312e81" stroke="#818cf8"/>
+  <text x="319" y="118" fill="#e0e7ff" text-anchor="middle" font-weight="700">Regex fallback</text>
+  <text x="319" y="136" fill="#c7d2fe" text-anchor="middle" font-size="12">100% offline path</text>
+  <text x="44" y="178" fill="#c7d2fe" font-size="12">Inputs treated as data, never instructions:</text>
+  <text x="44" y="198" fill="#e2e8f0" font-size="12">• buyer text   • product descriptions</text>
+  <text x="44" y="216" fill="#e2e8f0" font-size="12">• merchant / carrier notes ([SYSTEM: OVERRIDE] attacks)</text>
+  <text x="44" y="244" fill="#c7d2fe" font-size="12">Output: pydantic-validated IntentConstraints only</text>
+  <text x="44" y="264" fill="#c7d2fe" font-size="12">(max total, condition, delivery days, merchants)</text>
+  <text x="44" y="290" fill="#fca5a5" font-size="12">Cannot create, capture or void payments (tested)</text>
+
+  <path d="M426 180 H476" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#c)"/>
+  <text x="451" y="170" fill="#94a3b8" font-size="11" text-anchor="middle">validate</text>
+
+  <rect x="478" y="56" width="398" height="250" rx="10" fill="#052e1a" stroke="#22c55e"/>
+  <text x="677" y="80" fill="#4ade80" font-weight="700" text-anchor="middle">DETERMINISTIC ZONE — controls money</text>
+  <g fill="#14532d" stroke="#22c55e">
+    <rect x="498" y="96" width="170" height="44" rx="8"/><rect x="686" y="96" width="170" height="44" rx="8"/>
+    <rect x="498" y="150" width="170" height="44" rx="8"/><rect x="686" y="150" width="170" height="44" rx="8"/>
+  </g>
+  <g fill="#dcfce7" text-anchor="middle" font-size="12">
+    <text x="583" y="123">Human approves receipt</text><text x="771" y="123">Frozen SHA-256 seal</text>
+    <text x="583" y="177">Drift engine (7 invariants)</text><text x="771" y="177">Idempotent capture/void</text>
+  </g>
+  <text x="498" y="224" fill="#bbf7d0" font-size="12">• Constraints are immutable after approval; edits create a new version</text>
+  <text x="498" y="244" fill="#bbf7d0" font-size="12">• Drift module has no import path to an LLM (AST test)</text>
+  <text x="498" y="264" fill="#bbf7d0" font-size="12">• MCP agent server exposes 4 tools, none move money (tested)</text>
+  <text x="498" y="284" fill="#bbf7d0" font-size="12">• PayPal-Request-Id derived deterministically per action</text>
+</svg>

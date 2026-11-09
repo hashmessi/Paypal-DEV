@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13">
+  <rect width="900" height="400" rx="12" fill="#0f172a"/>
+  <text x="24" y="34" fill="#f8fafc" font-size="17" font-weight="700">Promise-gated settlement lifecycle</text>
+  <defs><marker id="b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#94a3b8"/></marker></defs>
+  <g stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#b)">
+    <path d="M154 110 H178"/><path d="M314 110 H338"/><path d="M474 110 H498"/><path d="M634 110 H658"/><path d="M770 110 H790" />
+  </g>
+  <g>
+    <rect x="24" y="76" width="130" height="68" rx="8" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="89" y="100" fill="#38bdf8" font-weight="700" text-anchor="middle">1 Instruction</text>
+    <text x="89" y="120" fill="#e2e8f0" text-anchor="middle" font-size="12">"black, new, ≤$90,</text><text x="89" y="135" fill="#e2e8f0" text-anchor="middle" font-size="12">arrives in 5 days"</text>
+
+    <rect x="178" y="76" width="136" height="68" rx="8" fill="#1e293b" stroke="#a78bfa"/>
+    <text x="246" y="100" fill="#a78bfa" font-weight="700" text-anchor="middle">2 Extract + bind</text>
+    <text x="246" y="120" fill="#e2e8f0" text-anchor="middle" font-size="12">typed constraints +</text><text x="246" y="135" fill="#e2e8f0" text-anchor="middle" font-size="12">Channel3 snapshot</text>
+
+    <rect x="338" y="76" width="136" height="68" rx="8" fill="#1e293b" stroke="#a78bfa"/>
+    <text x="406" y="100" fill="#a78bfa" font-weight="700" text-anchor="middle">3 Seal receipt</text>
+    <text x="406" y="120" fill="#e2e8f0" text-anchor="middle" font-size="12">RFC 8785 JSON →</text><text x="406" y="135" fill="#e2e8f0" text-anchor="middle" font-size="12">SHA-256, human approves</text>
+
+    <rect x="498" y="76" width="136" height="68" rx="8" fill="#1e293b" stroke="#fb923c"/>
+    <text x="566" y="100" fill="#fb923c" font-weight="700" text-anchor="middle">4 PayPal AUTHORIZE</text>
+    <text x="566" y="120" fill="#e2e8f0" text-anchor="middle" font-size="12">hash → custom_id</text><text x="566" y="135" fill="#e2e8f0" text-anchor="middle" font-size="12">funds held, not moved</text>
+
+    <rect x="658" y="76" width="112" height="68" rx="8" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="714" y="100" fill="#38bdf8" font-weight="700" text-anchor="middle">5 Evidence</text>
+    <text x="714" y="120" fill="#e2e8f0" text-anchor="middle" font-size="12">SKU · condition ·</text><text x="714" y="135" fill="#e2e8f0" text-anchor="middle" font-size="12">carrier · ETA</text>
+  </g>
+  <rect x="790" y="76" width="86" height="68" rx="8" fill="#052e1a" stroke="#22c55e" stroke-width="2"/>
+  <text x="833" y="104" fill="#4ade80" font-weight="700" text-anchor="middle">6 GATE</text>
+  <text x="833" y="124" fill="#bbf7d0" text-anchor="middle" font-size="11">drift engine</text>
+
+  <!-- outcomes -->
+  <g stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#b)">
+    <path d="M833 144 V184 H110 V214"/><path d="M833 144 V184 H330 V214"/><path d="M833 144 V184 H550 V214"/><path d="M833 144 V184 H770 V214"/>
+  </g>
+  <g text-anchor="middle">
+    <rect x="30" y="214" width="160" height="70" rx="8" fill="#052e1a" stroke="#22c55e"/>
+    <text x="110" y="238" fill="#4ade80" font-weight="700">MATCH</text><text x="110" y="258" fill="#e2e8f0" font-size="12">capture allowed</text><text x="110" y="274" fill="#e2e8f0" font-size="12">idempotent, one capture</text>
+    <rect x="250" y="214" width="160" height="70" rx="8" fill="#450a0a" stroke="#ef4444"/>
+    <text x="330" y="238" fill="#f87171" font-weight="700">DRIFT</text><text x="330" y="258" fill="#e2e8f0" font-size="12">capture blocked</text><text x="330" y="274" fill="#e2e8f0" font-size="12">wrong SKU / condition / color</text>
+    <rect x="470" y="214" width="160" height="70" rx="8" fill="#422006" stroke="#f59e0b"/>
+    <text x="550" y="238" fill="#fbbf24" font-weight="700">HOLD</text><text x="550" y="258" fill="#e2e8f0" font-size="12">wait for evidence</text><text x="550" y="274" fill="#e2e8f0" font-size="12">label only · late ETA</text>
+    <rect x="690" y="214" width="160" height="70" rx="8" fill="#2e1065" stroke="#a78bfa"/>
+    <text x="770" y="238" fill="#c4b5fd" font-weight="700">PROHIBITED</text><text x="770" y="258" fill="#e2e8f0" font-size="12">authorization expired</text><text x="770" y="274" fill="#e2e8f0" font-size="12">renewal required</text>
+  </g>
+  <text x="24" y="326" fill="#f8fafc" font-weight="700">Payment state machine</text>
+  <g font-size="12" fill="#e2e8f0">
+    <text x="24" y="350">created → approved → authorized → capturing → <tspan fill="#4ade80">captured</tspan></text>
+    <text x="24" y="370">authorized → <tspan fill="#f87171">voided</tspan> | <tspan fill="#c4b5fd">expired</tspan> | failed · terminal states are immutable · capturing → authorized on retryable failure</text>
+  </g>
+</svg>

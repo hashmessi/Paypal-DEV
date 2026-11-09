@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13">
+  <rect width="900" height="470" rx="12" fill="#0f172a"/>
+  <text x="24" y="34" fill="#f8fafc" font-size="17" font-weight="700">PromiseLoop — system architecture</text>
+  <text x="24" y="54" fill="#94a3b8" font-size="12">Modular monolith. Every money call is server-side; the browser only ever sees the public PayPal client ID.</text>
+
+  <!-- Browser -->
+  <rect x="24" y="76" width="200" height="160" rx="10" fill="#1e293b" stroke="#38bdf8"/>
+  <text x="124" y="100" fill="#38bdf8" font-weight="700" text-anchor="middle">React 19 + Vite + Tailwind</text>
+  <text x="40" y="126" fill="#e2e8f0">Control Tower (AG Grid)</text>
+  <text x="40" y="146" fill="#e2e8f0">Receipt approval + AP2 export</text>
+  <text x="40" y="166" fill="#e2e8f0">Scenario Console</text>
+  <text x="40" y="186" fill="#e2e8f0">Replay timeline · Proof page</text>
+  <text x="40" y="206" fill="#e2e8f0">PayPal Authorize button</text>
+
+  <!-- API -->
+  <rect x="290" y="76" width="360" height="360" rx="10" fill="#1e293b" stroke="#a78bfa"/>
+  <text x="470" y="100" fill="#a78bfa" font-weight="700" text-anchor="middle">FastAPI (Python 3.12)</text>
+  <g fill="#334155" stroke="#64748b">
+    <rect x="306" y="114" width="156" height="40" rx="6"/><rect x="478" y="114" width="156" height="40" rx="6"/>
+    <rect x="306" y="162" width="156" height="40" rx="6"/><rect x="478" y="162" width="156" height="40" rx="6"/>
+    <rect x="306" y="210" width="156" height="40" rx="6"/><rect x="478" y="210" width="156" height="40" rx="6"/>
+    <rect x="306" y="258" width="156" height="40" rx="6"/><rect x="478" y="258" width="156" height="40" rx="6"/>
+  </g>
+  <g fill="#e2e8f0" text-anchor="middle">
+    <text x="384" y="139">intent/ (LLM + fallback)</text><text x="556" y="139">discovery/ (Channel3)</text>
+    <text x="384" y="187">receipt/ (seal + AP2)</text><text x="556" y="187">payments/ (PayPal port)</text>
+    <text x="384" y="235">fulfillment/ (evidence)</text><text x="556" y="235">webhooks/ (verify+dedupe)</text>
+    <text x="384" y="283">replay/ · proof/</text><text x="556" y="283">ledger/ (hash chain)</text>
+  </g>
+  <rect x="306" y="312" width="328" height="52" rx="8" fill="#052e1a" stroke="#22c55e" stroke-width="2"/>
+  <text x="470" y="334" fill="#4ade80" font-weight="700" text-anchor="middle">drift/ — deterministic gate</text>
+  <text x="470" y="353" fill="#bbf7d0" text-anchor="middle" font-size="12">pure functions · no LLM · no I/O · sole authority to allow capture</text>
+  <rect x="306" y="376" width="328" height="44" rx="8" fill="#334155" stroke="#f59e0b"/>
+  <text x="470" y="394" fill="#fbbf24" font-weight="700" text-anchor="middle">mcp_server/ (stdio)</text>
+  <text x="470" y="411" fill="#e2e8f0" text-anchor="middle" font-size="12">4 read/propose tools · zero money tools</text>
+
+  <!-- DB -->
+  <rect x="716" y="76" width="160" height="110" rx="10" fill="#1e293b" stroke="#34d399"/>
+  <text x="796" y="100" fill="#34d399" font-weight="700" text-anchor="middle">PostgreSQL / SQLite</text>
+  <text x="730" y="124" fill="#e2e8f0" font-size="12">immutable receipts</text>
+  <text x="730" y="142" fill="#e2e8f0" font-size="12">append-only decision_events</text>
+  <text x="730" y="160" fill="#e2e8f0" font-size="12">financial_actions (idempotency)</text>
+  <text x="730" y="178" fill="#e2e8f0" font-size="12">webhook_events (unique id)</text>
+
+  <!-- externals -->
+  <rect x="716" y="206" width="160" height="56" rx="10" fill="#1e293b" stroke="#fb923c"/>
+  <text x="796" y="230" fill="#fb923c" font-weight="700" text-anchor="middle">PayPal Sandbox</text>
+  <text x="796" y="248" fill="#e2e8f0" text-anchor="middle" font-size="12">Orders v2 · Payments v2 · Webhooks</text>
+  <rect x="716" y="278" width="160" height="56" rx="10" fill="#1e293b" stroke="#f472b6"/>
+  <text x="796" y="302" fill="#f472b6" font-weight="700" text-anchor="middle">Channel3</text>
+  <text x="796" y="320" fill="#e2e8f0" text-anchor="middle" font-size="12">product search (raw snapshot)</text>
+  <rect x="716" y="350" width="160" height="56" rx="10" fill="#1e293b" stroke="#94a3b8"/>
+  <text x="796" y="374" fill="#cbd5e1" font-weight="700" text-anchor="middle">Gemini → OpenRouter</text>
+  <text x="796" y="392" fill="#e2e8f0" text-anchor="middle" font-size="12">intent text only · no tools</text>
+
+  <!-- arrows -->
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#94a3b8"/></marker></defs>
+  <g stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#a)">
+    <path d="M224 156 H288"/><path d="M652 130 H714"/><path d="M652 234 H714"/><path d="M652 306 H714"/><path d="M652 378 H714"/>
+  </g>
+  <text x="256" y="148" fill="#94a3b8" font-size="11" text-anchor="middle">REST</text>
+  <text x="24" y="270" fill="#94a3b8" font-size="12">Deploy: Render Blueprint (render.yaml)</text>
+  <text x="24" y="290" fill="#cbd5e1" font-size="12">• promiseloop-web  static site</text>
+  <text x="24" y="308" fill="#cbd5e1" font-size="12">• promiseloop-api  web service</text>
+  <text x="24" y="326" fill="#cbd5e1" font-size="12">• promiseloop-db   PostgreSQL</text>
+</svg>
